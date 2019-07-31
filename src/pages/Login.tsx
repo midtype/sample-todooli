@@ -2,7 +2,6 @@ import React from 'react';
 import qs from 'query-string';
 import { Redirect, withRouter, RouteComponentProps } from 'react-router';
 
-import './Login.css';
 import { setJWT } from '../utils/jwt';
 import Loader from '../components/Loader';
 

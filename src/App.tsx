@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import Index from './pages/Index';
 import About from './pages/About';
-import Features from './pages/Features';
-import Customers from './pages/Customers';
+import FAQs from './pages/FAQs';
+import Contact from './pages/Contact';
 import Pricing from './pages/Pricing';
 import Login from './pages/Login';
 
@@ -38,8 +38,8 @@ const App: React.FC = () => {
       <main>
         <Route path="/" exact component={Index} />
         <Route path="/about" exact component={About} />
-        <Route path="/features" exact component={Features} />
-        <Route path="/customers" exact component={Customers} />
+        <Route path="/faqs" exact component={FAQs} />
+        <Route path="/contact" exact component={Contact} />
         <Route path="/pricing" exact component={Pricing} />
         <Route path="/login" exact component={Login} />
 

@@ -2,25 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { Row, Col, Div, Container, Text, Image, Button, Icon } from 'atomize';
 
+import Footer from '../components/Footer';
+import MarketingHeader from '../components/MarketingHeader';
+
 const Styled = styled.div`
   width: 100vw;
-
-  .promo-0 {
-    background: linear-gradient(
-      to left,
-      rgba(1, 142, 245, 0.5),
-      rgba(1, 142, 245, 1)
-    );
-    padding: 4rem 0;
-    padding-top: 9rem;
-    clip-path: polygon(0 0, 100% 0%, 100% calc(100% - 200px), 0% 100%);
-  }
 
   hr {
     width: 50px;
     height: 2px;
     border: none;
-    background: yellow;
     box-shadow: none;
     margin: 0;
   }
@@ -64,24 +55,36 @@ const Feature: React.FC<IFeatureProps> = props => (
 
 const Tool: React.FC<IFeatureProps> = props => (
   <Col size="6">
-    <Icon name={props.image} size="20px" />
-    <Text tag="h4">{props.title}</Text>
-    <Text>{props.description}</Text>
+    <Div m={{ b: '2rem' }}>
+      <Icon name={props.image} size="20px" />
+      <Text tag="h4">{props.title}</Text>
+      <Text>{props.description}</Text>
+    </Div>
   </Col>
 );
 
 const IndexPage: React.FC = () => {
   return (
     <Styled>
-      <Div className="promo-0" shadow="5">
+      <MarketingHeader bg="1, 142, 245">
         <Container>
           <Row>
             <Col size="4">
-              <Text tag="h1" textSize="display3" m={{ b: '1rem' }}>
+              <Text
+                tag="h1"
+                textSize="display3"
+                m={{ b: '1rem' }}
+                textColor="white"
+              >
                 Get Stuff Done
               </Text>
-              <hr />
-              <Text tag="p" textSize="heading" m={{ t: '1rem' }}>
+              <hr style={{ background: 'yellow' }} />
+              <Text
+                tag="p"
+                textSize="heading"
+                m={{ t: '1rem' }}
+                textColor="white"
+              >
                 A beautiful To Do app, built on the Midtype platform.
               </Text>
               <Button
@@ -117,7 +120,7 @@ const IndexPage: React.FC = () => {
             </Col>
           </Row>
         </Container>
-      </Div>
+      </MarketingHeader>
       <Div className="promo-1">
         <Container>
           <Text
@@ -222,8 +225,6 @@ const IndexPage: React.FC = () => {
                     title="Save Drafts"
                     description="Save a draft of your next task and continue editing it until you're ready to publish it."
                   />
-                </Row>
-                <Row m={{ b: '2rem' }}>
                   <Tool
                     image="Search"
                     title="Find Tasks Quickly"
@@ -240,6 +241,7 @@ const IndexPage: React.FC = () => {
           </Row>
         </Container>
       </Div>
+      <Footer />
     </Styled>
   );
 };

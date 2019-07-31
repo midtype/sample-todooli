@@ -58,20 +58,19 @@ const Nav: React.FC = () => {
           <Col size="6" className="nav__section">
             <NavLink path="/" title="Home" />
             <NavLink path="/about" title="About" />
-            <NavLink path="/features" title="Features" />
-            <NavLink path="/customers" title="Customers" />
+            <NavLink path="/faqs" title="FAQs" />
             <NavLink path="/pricing" title="Pricing" />
           </Col>
           <Col size="4" className="nav__section">
             <NavLink path="/login" title="Login" />
             <Button
               bg="white"
-              textColor="info700"
+              textColor="black"
               suffix={
                 <Icon
                   name="LongRight"
                   size="16px"
-                  color="info700"
+                  color="black"
                   m={{ l: '.5rem' }}
                 />
               }
