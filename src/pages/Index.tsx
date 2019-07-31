@@ -69,7 +69,7 @@ const IndexPage: React.FC = () => {
       <MarketingHeader bg="1, 142, 245">
         <Container>
           <Row>
-            <Col size="4">
+            <Col size={{ xs: '12', sm: '4' }}>
               <Text
                 tag="h1"
                 textSize="display3"
@@ -111,6 +111,7 @@ const IndexPage: React.FC = () => {
             <Col size="1" />
             <Col size="7">
               <Image
+                d={{ xs: 'none', sm: 'block' }}
                 rounded="md"
                 overflow="hidden"
                 shadow="5"

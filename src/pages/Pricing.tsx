@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Div, Container, Text } from 'atomize';
+import { Row, Col, Div, Container, Text, Icon } from 'atomize';
 
 import MarketingHeader from '../components/MarketingHeader';
 import Footer from '../components/Footer';
@@ -8,8 +8,20 @@ interface IEmployeeProps {
   image: string;
   name: string;
   title: string;
-  description: string;
 }
+
+const PlanFeature: React.FC = props => (
+  <Div d="flex" m="auto">
+    <Icon
+      name="Checked"
+      color="success700"
+      size="20px"
+      textAlign="left"
+      m={{ r: '.5rem' }}
+    />
+    <Text>{props.children}</Text>
+  </Div>
+);
 
 const Plan: React.FC<IEmployeeProps> = props => (
   <Col size="6" textAlign="center">
@@ -27,10 +39,10 @@ const Plan: React.FC<IEmployeeProps> = props => (
       <Text tag="h3" textAlign="center" textSize="heading">
         {props.name}
       </Text>
-      <Text textAlign="center" textSize="subheader">
+      <Text textAlign="center" textSize="subheader" m={{ b: '2rem' }}>
         {props.title}
       </Text>
-      <Text textAlign="center">{props.description}</Text>
+      <Div m={{ l: '4rem' }}>{props.children}</Div>
     </Div>
   </Col>
 );
@@ -68,14 +80,20 @@ const PricingPage: React.FC = () => {
             image="/images/illustrations/mirage-uploading.png"
             name="Personal"
             title="Free"
-            description="John is a great guy. We all love him dearly. He is the co-founder."
-          />
+          >
+            <PlanFeature>Unlimited Tasks</PlanFeature>
+            <PlanFeature>30-Day Archive of Tasks</PlanFeature>
+            <PlanFeature>No Projects</PlanFeature>
+          </Plan>
           <Plan
             image="/images/illustrations/mirage-upgrade.png"
             name="Professional"
             title="$20/month"
-            description="John is a great guy. We all love him dearly. He is the co-founder."
-          />
+          >
+            <PlanFeature>Unlimited Tasks</PlanFeature>
+            <PlanFeature>Unlimited Archive of Tasks</PlanFeature>
+            <PlanFeature>Unlimited Projects</PlanFeature>
+          </Plan>
         </Row>
       </Container>
       <Footer />
