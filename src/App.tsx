@@ -26,23 +26,25 @@ const protect = (Page: React.FC): JSX.Element => (
       if (loading) {
         return <Loader />;
       }
-      return data ? <Page /> : <Redirect to="/login" />;
+      return data && data.currentUser ? <Page /> : <Redirect to="/login" />;
     }}
   </Query>
 );
 
 const App: React.FC = () => {
-  const LoggedInNav = protect(Nav);
   return (
     <Router>
-      {LoggedInNav}
+      <Nav />
       <main>
-        <Route path="/" exact render={() => protect(Index)} />
-        <Route path="/about" exact render={() => protect(About)} />
-        <Route path="/features" exact render={() => protect(Features)} />
-        <Route path="/customers" exact render={() => protect(Customers)} />
-        <Route path="/pricing" exact render={() => protect(Pricing)} />
+        <Route path="/" exact component={Index} />
+        <Route path="/about" exact component={About} />
+        <Route path="/features" exact component={Features} />
+        <Route path="/customers" exact component={Customers} />
+        <Route path="/pricing" exact component={Pricing} />
         <Route path="/login" exact component={Login} />
+
+        <Route path="/app" exact render={() => protect(Pricing)} />
+        <Route path="/app/billing" exact render={() => protect(Pricing)} />
       </main>
     </Router>
   );

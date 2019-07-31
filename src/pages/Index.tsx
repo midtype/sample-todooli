@@ -1,22 +1,28 @@
 import React from 'react';
-import { Query, QueryResult } from 'react-apollo';
+import styled from 'styled-components';
+import { Row, Col, Div, Container, Text } from 'atomize';
 
-import CURRENT_USER, { ICurrentUser } from '../apollo/queries/currentUser';
-import Loader from '../components/Loader';
+const Styled = styled.div`
+  width: 100vw;
+  background: red;
+  padding-top: 3rem;
+`;
 
 const IndexPage: React.FC = () => {
   return (
-    <Query query={CURRENT_USER}>
-      {(query: QueryResult<ICurrentUser>) => {
-        const { loading, data } = query;
-        if (loading) {
-          return <Loader />;
-        } else if (data) {
-          return <h1>Hello, {data.currentUser.name}!</h1>;
-        }
-        return <h1>Error!</h1>;
-      }}
-    </Query>
+    <Styled>
+      <Container>
+        <Row>
+          <Col size="12">
+            <Div p="1rem">
+              <Text tag="h1" textSize="display1" m={{ b: '4rem' }}>
+                This is h1 of display1 size
+              </Text>
+            </Div>
+          </Col>
+        </Row>
+      </Container>
+    </Styled>
   );
 };
 

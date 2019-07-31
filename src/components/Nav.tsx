@@ -1,11 +1,14 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import './Nav.css';
+const Styled = styled.header`
+  position: absolute;
+`;
 
 const Nav: React.FC = () => {
   return (
-    <header className="nav">
+    <Styled>
       <div className="nav__links">
         <Link className="nav__links__page" to="/">
           Home
@@ -23,7 +26,7 @@ const Nav: React.FC = () => {
           Pricing
         </Link>
       </div>
-    </header>
+    </Styled>
   );
 };
 
