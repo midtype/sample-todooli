@@ -1,5 +1,9 @@
 import { DefaultTheme } from 'atomize';
 
 export default {
-  ...DefaultTheme
+  ...DefaultTheme,
+  fontFamily: {
+    ...DefaultTheme.fontFamily,
+    primary: 'Avenir, Helvetica, sans-serif'
+  }
 };
