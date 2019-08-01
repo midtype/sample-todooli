@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from 'react-apollo';
 
-import './index.css';
 import client from './apollo/client';
+
 import App from './App';
+
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
