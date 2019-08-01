@@ -1,12 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Text, Button, Icon } from 'atomize';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { Query, QueryResult } from 'react-apollo';
+import { Text, Icon } from 'atomize';
 
 import Logo from './Logo';
+import Button from './Button';
+import Loader from './Loader';
 import Container from './MarketingContainer';
 
 import * as colors from '../constants/colors';
+import CURRENT_USER from '../apollo/queries/currentUser';
 
 const Styled = styled.header`
   position: absolute;
@@ -15,16 +20,6 @@ const Styled = styled.header`
   display: flex;
   align-items: center;
   z-index: 100;
-
-  a {
-    color: white;
-    opacity: 0.8;
-    transition: 250ms all;
-  }
-
-  a:hover {
-    opacity: 1;
-  }
 
   .nav__container {
     display: flex;
@@ -45,9 +40,24 @@ const Styled = styled.header`
   }
   .nav__section__link {
     margin-right: 2rem;
+    color: white;
+    opacity: 0.8;
+    transition: 250ms all;
+  }
+  .nav__section__link:hover {
+    opacity: 1;
   }
   .nav__section:last-child {
     justify-content: flex-end;
+  }
+  .nav__section__avatar {
+    width: 3rem;
+    height: 3rem;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin: auto;
+    border-radius: 50%;
   }
 
   @media screen and (max-width: 768px) {
@@ -71,7 +81,9 @@ const NavLink: React.FC<INavLinkProps> = props => (
   </Link>
 );
 
-const Nav: React.FC = () => {
+const Nav: React.FC<RouteComponentProps> = props => {
+  const { location } = props;
+  const isApp = location.pathname.indexOf('/app') === 0;
   return (
     <Styled>
       <Container className="nav__container">
@@ -86,28 +98,52 @@ const Nav: React.FC = () => {
           <NavLink path="/faqs" title="FAQs" />
           <NavLink path="/pricing" title="Pricing" />
         </div>
-        <div className="nav__section nav__section--login">
-          <NavLink path="/login" title="Login" />
-          <Button
-            bg="white"
-            textColor="black"
-            suffix={
-              <Icon
-                name="LongRight"
-                size="16px"
-                color="black"
-                m={{ l: '.5rem' }}
-              />
+        <Query query={CURRENT_USER}>
+          {(query: QueryResult) => {
+            const { loading, data } = query;
+            if (loading) {
+              return <Loader />;
             }
-            shadow="3"
-            hoverShadow="4"
-          >
-            Sign Up
-          </Button>
-        </div>
+            if (data && data.currentUser && isApp) {
+              return (
+                <div className="nav__section nav__section--profile">
+                  <div
+                    className="nav__section__avatar"
+                    style={{
+                      backgroundImage: `url('${data.currentUser.photoUrl}')`
+                    }}
+                  />
+                </div>
+              );
+            }
+            if (data && data.currentUser) {
+              return (
+                <div className="nav__section nav__section--login">
+                  <Link to="/app">
+                    <Button secondary={true}>Go To Dashboard</Button>
+                  </Link>
+                </div>
+              );
+            }
+            return (
+              <div className="nav__section nav__section--login">
+                <NavLink path="/login" title="Login" />
+                <Button secondary={true}>
+                  Sign Up
+                  <Icon
+                    name="LongRight"
+                    size="16px"
+                    color="black"
+                    m={{ l: '.5rem' }}
+                  />
+                </Button>
+              </div>
+            );
+          }}
+        </Query>
       </Container>
     </Styled>
   );
 };
 
-export default Nav;
+export default withRouter(Nav);

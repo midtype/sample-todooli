@@ -19,6 +19,8 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Login = lazy(() => import('./pages/Login'));
 
+const AppIndex = lazy(() => import('./pages/app/Index'));
+
 /**
  * There are some routes in our app that we only want logged in users to be able to
  * access. For those routes, we wrap them in a GraphQL query that checks if the user
@@ -52,7 +54,7 @@ const App: React.FC = () => {
           <Route path="/login" exact component={Login} />
 
           {/* Protected Routes */}
-          <Route path="/app" exact render={() => protect(Pricing)} />
+          <Route path="/app" exact render={() => protect(AppIndex)} />
           <Route path="/app/billing" exact render={() => protect(Pricing)} />
         </Suspense>
       </Switch>

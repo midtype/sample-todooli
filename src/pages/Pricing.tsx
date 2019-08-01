@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Text, Icon } from 'atomize';
 
 import MarketingHeader from '../components/MarketingHeader';
+import Container from '../components/MarketingContainer';
 import Footer from '../components/Footer';
 
 interface IEmployeeProps {
@@ -67,29 +68,29 @@ const PricingPage: React.FC = () => {
   return (
     <Styled>
       <MarketingHeader bg="1, 142, 245">
-        <Text
-          tag="h1"
-          textAlign="center"
-          textSize="display2"
-          textColor="white"
-          m={{ b: '1rem' }}
-        >
-          To do lists for everyone.
-        </Text>
-        <Text
-          tag="p"
-          textAlign="center"
-          textColor="white"
-          textSize="heading"
-          maxW="50rem"
-          m={{
-            xs: { t: '1rem', b: '8rem', x: 'auto' },
-            sm: { t: '1rem', b: '2rem', x: 'auto' }
-          }}
-        >
-          Whether you just want something to keep track of tasks or you're a
-          cross-functioning team, we have a plan for you.
-        </Text>
+        <Container>
+          <Text
+            tag="h1"
+            textAlign="center"
+            textSize="display2"
+            textColor="white"
+            m={{ b: '1rem' }}
+          >
+            To do lists for everyone.
+          </Text>
+          <Text
+            tag="p"
+            textAlign="center"
+            textColor="white"
+            textSize="heading"
+            maxW="50rem"
+            p={{ b: '5rem' }}
+            m="auto"
+          >
+            Whether you just want something to keep track of tasks or you're a
+            cross-functioning team, we have a plan for you.
+          </Text>
+        </Container>
       </MarketingHeader>
       <div className="pricing__plans">
         <Plan
