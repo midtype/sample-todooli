@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface IProps {
-  bg: string;
+  bg: (opacity: number) => string;
 }
 
 const Styled = styled.div`
@@ -21,8 +21,8 @@ const MarketingHeader: React.FC<IProps> = props => (
     style={{
       background: `linear-gradient(
     to left,
-    rgba(${props.bg}, 0.5),
-    rgba(${props.bg}, 1)
+    ${props.bg(0.5)},
+    ${props.bg(1)}
   )`
     }}
   >

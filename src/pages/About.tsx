@@ -6,6 +6,8 @@ import MarketingHeader from '../components/MarketingHeader';
 import Container from '../components/MarketingContainer';
 import Footer from '../components/Footer';
 
+import * as colors from '../constants/colors';
+
 interface IEmployeeProps {
   name: string;
   title: string;
@@ -64,7 +66,7 @@ const Employee: React.FC<IEmployeeProps> = props => (
 const AboutPage: React.FC = () => {
   return (
     <Styled>
-      <MarketingHeader bg="144, 19, 254">
+      <MarketingHeader bg={colors.RED}>
         <Text
           tag="h1"
           textAlign="center"

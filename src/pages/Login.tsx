@@ -20,7 +20,11 @@ const Styled = styled.div`
     top: 0;
     width: 100vw;
     height: 5rem;
-    background: ${colors.BRAND_1(1)};
+    background: linear-gradient(
+      to right,
+      ${colors.BRAND_1_LIGHT(1)},
+      ${colors.BRAND_1_LIGHT(0.5)}
+    );
   }
 
   .login-form__container {

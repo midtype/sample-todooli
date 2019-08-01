@@ -86,7 +86,11 @@ const AboutPage: React.FC = () => {
           </ul>
         </div>
         <div className="tasks">
-          <Task completed={true} />
+          <Task
+            summary="Test this out"
+            completed={true}
+            date="2018-09-01T19:33:00.000Z"
+          />
           <Task editing={true} />
         </div>
       </Container>

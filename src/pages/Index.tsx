@@ -152,7 +152,7 @@ const Tool: React.FC<IFeatureProps> = props => (
 const IndexPage: React.FC = () => {
   return (
     <Styled>
-      <MarketingHeader bg="1, 142, 245">
+      <MarketingHeader bg={colors.BRAND_1}>
         <Container className="promo-0__container">
           <div className="promo-0__left">
             <Text tag="h1" textSize="display3" m={{ b: '1rem' }}>

@@ -1,37 +1,49 @@
 import React from 'react';
-import { Row, Col, Div, Container, Text } from 'atomize';
+import styled from 'styled-components';
+import { Text } from 'atomize';
 
 import MarketingHeader from '../components/MarketingHeader';
+import Container from '../components/MarketingContainer';
 import Footer from '../components/Footer';
 
 import { TOPICS, QUESTIONS } from '../constants/faqs';
+import * as styles from '../constants/styles';
+import * as colors from '../constants/colors';
+
+const Styled = styled.div`
+  .topics {
+    margin-bottom: 10rem;
+  }
+  .topic {
+    box-shadow: ${styles.BOX_SHADOW};
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+  }
+`;
 
 const Question: React.FC<any> = props => (
-  <>
+  <div>
     <Text tag="h4">{props.question}</Text>
     <Text m={{ b: '1rem' }}>{props.answer}</Text>
-  </>
+  </div>
 );
 
 const Topic: React.FC<any> = props => (
-  <Col size="6">
-    <Div shadow="5" rounded="md" p="2rem" m=".5rem">
-      <Text tag="h3" textAlign="center" textSize="heading" m={{ b: '1rem' }}>
-        {props.displayName}
-      </Text>
-      {QUESTIONS.filter(question => question.topic === props.id).map(
-        question => (
-          <Question key={question.question} {...question} />
-        )
-      )}
-    </Div>
-  </Col>
+  <div className="topic">
+    <Text tag="h3" textAlign="center" textSize="heading" m={{ b: '1rem' }}>
+      {props.displayName}
+    </Text>
+    {QUESTIONS.filter(question => question.topic === props.id).map(question => (
+      <Question key={question.question} {...question} />
+    ))}
+  </div>
 );
 
 const AboutPage: React.FC = () => {
   return (
-    <Div>
-      <MarketingHeader bg="125, 211, 33">
+    <Styled>
+      <MarketingHeader bg={colors.GREEN}>
         <Text
           tag="h1"
           textAlign="center"
@@ -42,18 +54,16 @@ const AboutPage: React.FC = () => {
           Frequently Asked Questions
         </Text>
       </MarketingHeader>
-      <Div m={{ b: '10rem' }}>
+      <div className="topics">
         <Container>
-          <Row>
-            {Object.keys(TOPICS).map(id => (
-              <Topic key={id} id={id} displayName={TOPICS[id].displayName} />
-            ))}
-          </Row>
+          {Object.keys(TOPICS).map(id => (
+            <Topic key={id} id={id} displayName={TOPICS[id].displayName} />
+          ))}
         </Container>
-      </Div>
+      </div>
       <Container />
       <Footer />
-    </Div>
+    </Styled>
   );
 };
 

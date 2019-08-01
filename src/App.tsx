@@ -54,7 +54,8 @@ const App: React.FC = () => {
           <Route path="/login" exact component={Login} />
 
           {/* Protected Routes */}
-          <Route path="/app" exact render={() => protect(AppIndex)} />
+          {/* <Route path="/app" exact render={() => protect(AppIndex)} /> */}
+          <Route path="/app" exact component={AppIndex} />
           <Route path="/app/billing" exact render={() => protect(Pricing)} />
         </Suspense>
       </Switch>
