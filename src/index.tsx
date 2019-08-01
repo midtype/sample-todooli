@@ -1,22 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from 'react-apollo';
-import { ThemeProvider, StyleReset } from 'atomize';
 
 import client from './apollo/client';
-import theme from './utils/theme';
 
 import App from './App';
 
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
-    <ApolloProvider client={client}>
-      <StyleReset />
-      <App />
-    </ApolloProvider>
-  </ThemeProvider>,
+  <ApolloProvider client={client}>
+    <App />
+  </ApolloProvider>,
   document.getElementById('root')
 );
 

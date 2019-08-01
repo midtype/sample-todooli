@@ -9,6 +9,7 @@ import Contact from './pages/Contact';
 import Pricing from './pages/Pricing';
 import Login from './pages/Login';
 
+import GlobalStyle from './components/GlobalStyle';
 import Nav from './components/Nav';
 import Loader from './components/Loader';
 import CURRENT_USER from './apollo/queries/currentUser';
@@ -34,6 +35,7 @@ const protect = (Page: React.FC): JSX.Element => (
 const App: React.FC = () => {
   return (
     <Router>
+      <GlobalStyle />
       <Nav />
       <main>
         <Route path="/" exact component={Index} />

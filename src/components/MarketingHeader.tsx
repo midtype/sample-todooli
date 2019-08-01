@@ -1,25 +1,33 @@
 import React from 'react';
-import { Div } from 'atomize';
+import styled from 'styled-components';
 
 interface IProps {
   bg: string;
 }
 
+const Styled = styled.div`
+  clip-path: polygon(0 0, 100% 0%, 100% calc(100% - 200px), 0% 100%);
+  padding: 4rem 0;
+  padding-top: 9rem;
+
+  @media screen and (max-width: 768px) {
+    clip-path: none;
+  }
+`;
+
 const MarketingHeader: React.FC<IProps> = props => (
-  <Div
+  <Styled
     className="promo-0"
-    p={{ y: '4rem', t: '9rem' }}
     style={{
       background: `linear-gradient(
     to left,
     rgba(${props.bg}, 0.5),
     rgba(${props.bg}, 1)
-  )`,
-      clipPath: 'polygon(0 0, 100% 0%, 100% calc(100% - 200px), 0% 100%)'
+  )`
     }}
   >
     {props.children}
-  </Div>
+  </Styled>
 );
 
 export default MarketingHeader;

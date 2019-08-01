@@ -21,7 +21,7 @@ const Topic: React.FC<any> = props => (
       </Text>
       {QUESTIONS.filter(question => question.topic === props.id).map(
         question => (
-          <Question {...question} />
+          <Question key={question.question} {...question} />
         )
       )}
     </Div>
@@ -31,16 +31,22 @@ const Topic: React.FC<any> = props => (
 const AboutPage: React.FC = () => {
   return (
     <Div>
-      <MarketingHeader bg="125, 211, 33" />
-
-      <Text tag="h1" textAlign="center" textSize="display2" m={{ b: '1rem' }}>
-        Frequently Asked Questions
-      </Text>
+      <MarketingHeader bg="125, 211, 33">
+        <Text
+          tag="h1"
+          textAlign="center"
+          textSize="display2"
+          textColor="white"
+          m={{ b: '6rem' }}
+        >
+          Frequently Asked Questions
+        </Text>
+      </MarketingHeader>
       <Div m={{ b: '10rem' }}>
         <Container>
           <Row>
             {Object.keys(TOPICS).map(id => (
-              <Topic id={id} displayName={TOPICS[id].displayName} />
+              <Topic key={id} id={id} displayName={TOPICS[id].displayName} />
             ))}
           </Row>
         </Container>
