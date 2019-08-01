@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Div, Text, Icon } from 'atomize';
+import { Text, Icon } from 'atomize';
 
 import MarketingHeader from '../components/MarketingHeader';
 import Footer from '../components/Footer';
@@ -11,32 +11,47 @@ interface IEmployeeProps {
   title: string;
 }
 
-const PlanFeature: React.FC = props => (
-  <Div d="flex" m="auto">
-    <Icon name="Checked" color="success700" size="20px" m={{ r: '.5rem' }} />
-    <Text>{props.children}</Text>
-  </Div>
-);
-
-const StyledFeature = styled.div`
-  box-shadow: 0 0 1px 0 rgba(8, 11, 14, 0.06),
-    0 32px 40px -1px rgba(8, 11, 14, 0.1);
-  margin: 1rem;
-  padding: 2rem;
-  min-width: 20rem;
+const Styled = styled.div`
+  .pricing__plans {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10rem;
+  }
+  .pricing__plans__plan {
+    display: flex;
+    margin: auto;
+  }
+  .pricing__plans__plan__feature {
+    box-shadow: 0 0 1px 0 rgba(8, 11, 14, 0.06),
+      0 32px 40px -1px rgba(8, 11, 14, 0.1);
+    margin: 1rem;
+    padding: 2rem;
+    min-width: 20rem;
+  }
+  .pricing__plans__plan__feature__illustration {
+    width: 10rem;
+    height: 10rem;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin: auto;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+  }
 `;
 
+const PlanFeature: React.FC = props => (
+  <div className="pricing__plans__plan">
+    <Icon name="Checked" color="success700" size="20px" m={{ r: '.5rem' }} />
+    <Text>{props.children}</Text>
+  </div>
+);
+
 const Plan: React.FC<IEmployeeProps> = props => (
-  <StyledFeature>
-    <Div
-      bgImg={props.image}
-      w="10rem"
-      h="10rem"
-      bgSize="contain"
-      bgPos="center center"
-      bgRepeat="no-repeat"
-      m={{ x: 'auto', b: '1rem' }}
-      rounded="circle"
+  <div className="pricing__plans__plan__feature">
+    <div
+      className="pricing__plans__plan__feature__illustration"
+      style={{ backgroundImage: `url('${props.image}')` }}
     />
     <Text tag="h3" textAlign="center" textSize="heading">
       {props.name}
@@ -45,12 +60,12 @@ const Plan: React.FC<IEmployeeProps> = props => (
       {props.title}
     </Text>
     <div>{props.children}</div>
-  </StyledFeature>
+  </div>
 );
 
 const PricingPage: React.FC = () => {
   return (
-    <Div>
+    <Styled>
       <MarketingHeader bg="1, 142, 245">
         <Text
           tag="h1"
@@ -76,7 +91,7 @@ const PricingPage: React.FC = () => {
           cross-functioning team, we have a plan for you.
         </Text>
       </MarketingHeader>
-      <Div m={{ b: '10rem' }} d="flex" justify="center">
+      <div className="pricing__plans">
         <Plan
           image="/images/illustrations/mirage-uploading.png"
           name="Personal"
@@ -95,9 +110,9 @@ const PricingPage: React.FC = () => {
           <PlanFeature>Unlimited Archive of Tasks</PlanFeature>
           <PlanFeature>Unlimited Projects</PlanFeature>
         </Plan>
-      </Div>
+      </div>
       <Footer />
-    </Div>
+    </Styled>
   );
 };
 

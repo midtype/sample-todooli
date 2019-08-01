@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Query, QueryResult } from 'react-apollo';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-
-import Index from './pages/Index';
-import About from './pages/About';
-import FAQs from './pages/FAQs';
-import Contact from './pages/Contact';
-import Pricing from './pages/Pricing';
-import Login from './pages/Login';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch
+} from 'react-router-dom';
 
 import GlobalStyle from './components/GlobalStyle';
 import Nav from './components/Nav';
 import Loader from './components/Loader';
 import CURRENT_USER from './apollo/queries/currentUser';
+
+const Index = lazy(() => import('./pages/Index'));
+const About = lazy(() => import('./pages/About'));
+const FAQs = lazy(() => import('./pages/FAQs'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Login = lazy(() => import('./pages/Login'));
 
 /**
  * There are some routes in our app that we only want logged in users to be able to
@@ -27,7 +32,7 @@ const protect = (Page: React.FC): JSX.Element => (
       if (loading) {
         return <Loader />;
       }
-      return data && data.currentUser ? <Page /> : <Redirect to="/login" />;
+      return data && data.currentUser ? <Page /> : <Redirect to="/" />;
     }}
   </Query>
 );
@@ -35,19 +40,23 @@ const protect = (Page: React.FC): JSX.Element => (
 const App: React.FC = () => {
   return (
     <Router>
-      <GlobalStyle />
       <Nav />
-      <main>
-        <Route path="/" exact component={Index} />
-        <Route path="/about" exact component={About} />
-        <Route path="/faqs" exact component={FAQs} />
-        <Route path="/contact" exact component={Contact} />
-        <Route path="/pricing" exact component={Pricing} />
-        <Route path="/login" exact component={Login} />
+      <Switch>
+        <Suspense fallback={<Loader />}>
+          {/* Public Routes */}
+          <Route path="/" exact component={Index} />
+          <Route path="/about" exact component={About} />
+          <Route path="/faqs" exact component={FAQs} />
+          <Route path="/contact" exact component={Contact} />
+          <Route path="/pricing" exact component={Pricing} />
+          <Route path="/login" exact component={Login} />
 
-        <Route path="/app" exact render={() => protect(Pricing)} />
-        <Route path="/app/billing" exact render={() => protect(Pricing)} />
-      </main>
+          {/* Protected Routes */}
+          <Route path="/app" exact render={() => protect(Pricing)} />
+          <Route path="/app/billing" exact render={() => protect(Pricing)} />
+        </Suspense>
+      </Switch>
+      <GlobalStyle />
     </Router>
   );
 };
