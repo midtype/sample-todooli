@@ -2,15 +2,21 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import format from 'dateformat';
+import { Query, QueryResult, Mutation, MutationFn } from 'react-apollo';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 import Check from './CheckCircle';
+import Loader from './Loader';
 import Button from './Button';
 import Input from './elements/Input';
 
 import * as colors from '../constants/colors';
 import * as styles from '../constants/styles';
+
+import CURRENT_USER, { ICurrentUser } from '../apollo/queries/currentUser';
+import CREATE_TASK from '../apollo/mutations/createTask';
+import UPDATE_TASK from '../apollo/mutations/updateTask';
 
 const Styled = styled.div`
   border-bottom: 1px solid ${colors.GRAY_2()};
@@ -18,6 +24,10 @@ const Styled = styled.div`
   display: grid;
   grid-template-columns: 2rem auto 8rem;
   grid-gap: 2rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   .checkmark {
     cursor: pointer;
@@ -78,20 +88,18 @@ const Styled = styled.div`
 `;
 
 interface IProps {
-  project?: string;
-  date?: string;
-  summary?: string;
-  editing?: boolean;
-  completed?: boolean;
+  task?: ITask;
+  editing: boolean;
+  onClickCancel: () => void;
 }
 
-const Logo: React.FC<IProps> = props => {
-  const { completed } = props;
+const Task: React.FC<IProps> = props => {
+  const completed = props.task ? props.task.completed : false;
 
   const [editing, setEditing] = useState(props.editing || false);
-  const [summary, setSummary] = useState(props.summary || '');
+  const [summary, setSummary] = useState(props.task ? props.task.summary : '');
   const [date, setDate] = useState(
-    props.date ? new Date(props.date) : new Date()
+    props.task ? new Date(props.task.dueDate) : new Date()
   );
 
   const onEdit = () => {
@@ -99,61 +107,111 @@ const Logo: React.FC<IProps> = props => {
   };
   const onCancel = () => {
     setEditing(false);
-    setSummary(props.summary || '');
+    props.onClickCancel();
+    setSummary(props.task ? props.task.summary : '');
   };
   const onSave = () => {
     setEditing(false);
+    props.onClickCancel();
   };
 
   return (
-    <Styled className={completed ? 'checked' : 'unchecked'}>
-      <div className="checkmark">
-        <Check fill={completed ? colors.GREEN() : colors.GRAY_2()} />
-      </div>
-      <div className="summary">
-        {editing ? (
-          <Input
-            value={summary}
-            onChange={val => setSummary(val)}
-            style={{ marginBottom: '1rem' }}
-          />
-        ) : (
-          <p className="summary__text">{summary}</p>
-        )}
-        <div className="summary__date">
-          <div
-            className="summary__date__project"
-            style={{ borderColor: '#C56CD6', color: '#C56CD6' }}
-          >
-            Design
-          </div>
-          <span>Due On</span>
-          {editing ? (
-            <DatePicker
-              selected={date}
-              onChange={d => setDate(d || new Date())}
-            />
-          ) : (
-            <strong>{format(date, 'dddd, mmmm d, yyyy')}</strong>
-          )}
-        </div>
-      </div>
-      <div className="save">
-        {editing ? (
-          <>
-            <Button secondary={true} onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button onClick={onSave}>Save</Button>
-          </>
-        ) : (
-          <Button secondary={true} onClick={onEdit}>
-            Edit
-          </Button>
-        )}
-      </div>
-    </Styled>
+    <Query query={CURRENT_USER}>
+      {(query: QueryResult<ICurrentUser>) => {
+        const { loading, data } = query;
+        if (loading) {
+          return <Loader />;
+        }
+        if (data && data.currentUser) {
+          return (
+            <Styled className={completed ? 'checked' : 'unchecked'}>
+              <Mutation mutation={UPDATE_TASK}>
+                {(update: MutationFn) => (
+                  <div className="checkmark">
+                    <Check
+                      onClick={() => {
+                        if (props.task) {
+                          update({
+                            variables: {
+                              id: props.task.id,
+                              completed: !completed
+                            }
+                          });
+                        }
+                      }}
+                      fill={completed ? colors.GREEN() : colors.GRAY_2()}
+                    />
+                  </div>
+                )}
+              </Mutation>
+              <div className="summary">
+                {editing ? (
+                  <Input
+                    value={summary}
+                    onChange={val => setSummary(val)}
+                    style={{ marginBottom: '1rem' }}
+                  />
+                ) : (
+                  <p className="summary__text">{summary}</p>
+                )}
+                <div className="summary__date">
+                  <div
+                    className="summary__date__project"
+                    style={{ borderColor: '#C56CD6', color: '#C56CD6' }}
+                  >
+                    Design
+                  </div>
+                  <span>Due On</span>
+                  {editing ? (
+                    <DatePicker
+                      selected={date}
+                      onChange={d => setDate(d || new Date())}
+                    />
+                  ) : (
+                    <strong>{format(date, 'dddd, mmmm d, yyyy')}</strong>
+                  )}
+                </div>
+              </div>
+              <div className="save">
+                {editing ? (
+                  <>
+                    <Button secondary={true} onClick={onCancel}>
+                      Cancel
+                    </Button>
+                    <Mutation mutation={props.task ? UPDATE_TASK : CREATE_TASK}>
+                      {(create: MutationFn) => (
+                        <Button
+                          onClick={() => {
+                            onSave();
+                            create({
+                              refetchQueries: ['GetTasks'],
+                              variables: {
+                                id: props.task ? props.task.id : undefined,
+                                userId: data.currentUser.id,
+                                summary,
+                                dueDate: date.toISOString()
+                              }
+                            });
+                          }}
+                        >
+                          Save
+                        </Button>
+                      )}
+                    </Mutation>
+                  </>
+                ) : (
+                  <Button secondary={true} onClick={onEdit}>
+                    Edit
+                  </Button>
+                )}
+              </div>
+            </Styled>
+          );
+        }
+        return null;
+      }}
+    </Query>
   );
 };
 
-export default Logo;
+export default Task;

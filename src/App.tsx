@@ -10,7 +10,7 @@ import {
 import GlobalStyle from './components/GlobalStyle';
 import Nav from './components/Nav';
 import Loader from './components/Loader';
-import CURRENT_USER from './apollo/queries/currentUser';
+import CURRENT_USER, { ICurrentUser } from './apollo/queries/currentUser';
 
 const Index = lazy(() => import('./pages/Index'));
 const About = lazy(() => import('./pages/About'));
@@ -29,7 +29,7 @@ const AppIndex = lazy(() => import('./pages/app/Index'));
  */
 const protect = (Page: React.FC): JSX.Element => (
   <Query query={CURRENT_USER}>
-    {(query: QueryResult) => {
+    {(query: QueryResult<ICurrentUser>) => {
       const { loading, data } = query;
       if (loading) {
         return <Loader />;

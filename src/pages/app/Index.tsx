@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Query, QueryResult } from 'react-apollo';
 
 import Button from '../../components/Button';
 import Container from '../../components/MarketingContainer';
 import Task from '../../components/Task';
+import Loader from '../../components/Loader';
 
 import * as colors from '../../constants/colors';
+import GET_TASKS, { ITasks } from '../../apollo/queries/tasks';
 
 const Styled = styled.div`
   padding: 3rem;
@@ -65,15 +68,25 @@ const Styled = styled.div`
     overflow: auto;
     padding: 2rem;
   }
+  .tasks__empty {
+    text-align: center;
+    color: ${colors.GRAY_3()};
+  }
 `;
 
-const AboutPage: React.FC = () => {
+const TasksPage: React.FC = () => {
+  const [newTask, setNewTask] = useState(false);
+
+  const onCreateTask = () => setNewTask(true);
+  const onCancelEdit = () => setNewTask(false);
   return (
     <Styled>
       <div className="nav__bg" />
       <Container className="container">
         <div className="menu">
-          <Button className="menu__create">Create Task</Button>
+          <Button className="menu__create" onClick={onCreateTask}>
+            Create Task
+          </Button>
           <h4 className="menu__list-heading">Tasks</h4>
           <ul className="menu__list">
             <li className="menu__list__item menu__list__item--active">Open</li>
@@ -86,16 +99,33 @@ const AboutPage: React.FC = () => {
           </ul>
         </div>
         <div className="tasks">
-          <Task
-            summary="Test this out"
-            completed={true}
-            date="2018-09-01T19:33:00.000Z"
-          />
-          <Task editing={true} />
+          {newTask && <Task editing={true} onClickCancel={onCancelEdit} />}
+          <Query query={GET_TASKS}>
+            {(query: QueryResult<ITasks>) => {
+              const { loading, data } = query;
+              if (loading) {
+                return <Loader />;
+              }
+              if (data && data.tasks) {
+                return data.tasks.nodes.map(task => (
+                  <Task
+                    key={task.id}
+                    task={task}
+                    editing={false}
+                    onClickCancel={onCancelEdit}
+                  />
+                ));
+              }
+              if (!newTask) {
+                return <h4 className="tasks__empty">No tasks created.</h4>;
+              }
+              return null;
+            }}
+          </Query>
         </div>
       </Container>
     </Styled>
   );
 };
 
-export default AboutPage;
+export default TasksPage;
