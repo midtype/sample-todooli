@@ -7,15 +7,18 @@ export default gql`
       name
       email
       photoUrl
+      stripeSubscriptionBySubscriberId {
+        id
+        plan {
+          id
+          slug
+          amount
+        }
+      }
     }
   }
 `;
 
 export interface ICurrentUser {
-  currentUser: {
-    id: string;
-    name: string;
-    email: string;
-    photoUrl: string;
-  };
+  currentUser: IUser;
 }

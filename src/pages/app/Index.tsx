@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Query, QueryResult } from 'react-apollo';
 
+import AppHeader from '../../components/AppHeader';
 import Button from '../../components/Button';
 import Container from '../../components/MarketingContainer';
 import Task from '../../components/Task';
@@ -13,19 +14,6 @@ import GET_TASKS, { ITasks } from '../../apollo/queries/tasks';
 const Styled = styled.div`
   padding: 3rem;
   padding-top: 8rem;
-
-  .nav__bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 5rem;
-    background: linear-gradient(
-      to right,
-      ${colors.BRAND_1_LIGHT(1)},
-      ${colors.BRAND_1_LIGHT(0.5)}
-    );
-  }
 
   .container {
     height: calc(100vh - 11rem);
@@ -81,7 +69,7 @@ const TasksPage: React.FC = () => {
   const onCancelEdit = () => setNewTask(false);
   return (
     <Styled>
-      <div className="nav__bg" />
+      <AppHeader />
       <Container className="container">
         <div className="menu">
           <Button className="menu__create" onClick={onCreateTask}>
@@ -92,10 +80,12 @@ const TasksPage: React.FC = () => {
             <li className="menu__list__item menu__list__item--active">Open</li>
             <li className="menu__list__item">Completed</li>
           </ul>
+
           <h4 className="menu__list-heading">Projects</h4>
           <ul className="menu__list">
             <li className="menu__list__item">Open</li>
             <li className="menu__list__item">Completed</li>
+            <Button secondary={true}>New</Button>
           </ul>
         </div>
         <div className="tasks">

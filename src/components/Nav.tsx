@@ -11,6 +11,7 @@ import Loader from './Loader';
 import Container from './MarketingContainer';
 
 import * as colors from '../constants/colors';
+import * as styles from '../constants/styles';
 import CURRENT_USER from '../apollo/queries/currentUser';
 
 const Styled = styled.header`
@@ -58,6 +59,12 @@ const Styled = styled.header`
     background-repeat: no-repeat;
     margin: auto;
     border-radius: 50%;
+    transition: 250ms all;
+    cursor: pointer;
+  }
+  .nav__section__avatar:hover {
+    transform: translateY(-2px);
+    box-shadow: ${styles.BOX_SHADOW_DARK};
   }
 
   @media screen and (max-width: 768px) {

@@ -2,6 +2,14 @@
 
 declare module 'atomize';
 
+interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  photoUrl: string;
+  stripeSubscriptionBySubscriberId: IStripeSubscription;
+}
+
 interface ITask {
   id: string;
   summary: string;
@@ -15,4 +23,35 @@ interface IProject {
   id: string;
   name: string;
   color: string;
+}
+
+interface IStripeSubscription {
+  id: string;
+  pid: string;
+  customerPid: string;
+  active: boolean;
+  subscriber: User;
+  plan: IStripePlan;
+  inactiveReason: {
+    cause: string;
+    requiresActionSecret: string;
+  };
+}
+
+interface IStripePlan {
+  id: string;
+  pid: string;
+  slug: string;
+  amount: number;
+  stripeProduct: IStripeProduct;
+}
+
+interface IStripeProduct {
+  id: string;
+  pid: string;
+  slug: string;
+  name: string;
+  stripePlans: {
+    nodes: IStripePlan[];
+  };
 }
