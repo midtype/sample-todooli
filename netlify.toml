@@ -2,3 +2,9 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[template.environment]
+  REACT_APP_MY_APP_NAME="Todooli"
+  REACT_APP_MY_APP_ID="YOUR MIDTYPE PROJECT ID"
+  REACT_APP_MY_APP_GOOGLE_SIGN_IN_LINK="YOUR `http://localhost:8000/login` GOOGLE SIGN IN LINK"
+  REACT_APP_STRIPE_PK=""
