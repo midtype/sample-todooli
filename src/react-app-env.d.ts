@@ -31,7 +31,7 @@ interface IStripeSubscription {
   customerPid: string;
   active: boolean;
   subscriber: User;
-  plan: IStripePlan;
+  stripePlan: IStripePlan;
   inactiveReason: {
     cause: string;
     requiresActionSecret: string;

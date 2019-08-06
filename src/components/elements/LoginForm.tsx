@@ -3,6 +3,10 @@ import styled from 'styled-components';
 
 import * as colors from '../../constants/colors';
 
+interface IProps {
+  title?: string;
+}
+
 const Styled = styled.div`
   position: relative;
   width: 24rem;
@@ -12,7 +16,9 @@ const Styled = styled.div`
   text-align: center;
   box-shadow: 0 0 1px 0 rgba(8, 11, 14, 0.06),
     0 32px 40px -1px rgba(8, 11, 14, 0.1);
-
+  h3 {
+    margin-bottom: 2rem;
+  }
   .login__google img {
     width: 10rem;
   }
@@ -33,10 +39,10 @@ const Styled = styled.div`
   }
 `;
 
-const Logo: React.FC = props => {
+const Logo: React.FC<IProps> = props => {
   return (
     <Styled>
-      <h4>Login</h4>
+      <h3>{props.title || 'Login'}</h3>
       <div className="login__google">
         <a href={process.env.REACT_APP_MY_APP_GOOGLE_SIGN_IN_LINK}>
           <img src="/images/google-sign-in.png" alt="Google sign in link." />

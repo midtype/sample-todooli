@@ -1,15 +1,16 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  {
+  query GetCurrentUser {
     currentUser {
       id
       name
       email
       photoUrl
       stripeSubscriptionBySubscriberId {
+        active
         id
-        plan {
+        stripePlan {
           id
           slug
           amount

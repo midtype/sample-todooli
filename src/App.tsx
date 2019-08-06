@@ -32,6 +32,7 @@ const AppOnboarding = lazy(() => import('./pages/app/Onboarding'));
  */
 const protect = (Page: React.FC): JSX.Element => {
   const { pathname } = window.location;
+
   return (
     <Query query={CURRENT_USER}>
       {(query: QueryResult<ICurrentUser>) => {
@@ -42,16 +43,23 @@ const protect = (Page: React.FC): JSX.Element => {
         const isSubscriber =
           data &&
           data.currentUser &&
-          data.currentUser.stripeSubscriptionBySubscriberId;
+          data.currentUser.stripeSubscriptionBySubscriberId &&
+          data.currentUser.stripeSubscriptionBySubscriberId.active;
 
         if (loading) {
           return <Loader />;
         }
         if (!isLoggedIn) {
+          // If a non-logged user is trying to access the app, redirect them to the homepage.
           return <Redirect to="/" />;
         }
         if (!isSubscriber && !isOnboarding) {
+          // If a non-subscriber is trying to reach the app, redirect them to the payment screen.
           return <Redirect to="/app/onboarding" />;
+        }
+        if (isSubscriber && isOnboarding) {
+          // If a subscriber is trying to create a subscription, redirect them to the app.
+          return <Redirect to="/app" />;
         }
         return <Page />;
       }}

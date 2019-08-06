@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Query, QueryResult } from 'react-apollo';
-import { Text, Icon } from 'atomize';
+import { Text } from 'atomize';
 
 import Logo from './Logo';
 import Button from './Button';
 import Loader from './Loader';
 import Container from './MarketingContainer';
+import LoginModal from './elements/LoginModal';
 
 import * as colors from '../constants/colors';
 import * as styles from '../constants/styles';
@@ -66,6 +67,10 @@ const Styled = styled.header`
     transform: translateY(-2px);
     box-shadow: ${styles.BOX_SHADOW_DARK};
   }
+  .nav__section__login-button {
+    color: white;
+    margin-right: 2rem;
+  }
 
   @media screen and (max-width: 768px) {
     .nav__section--links {
@@ -91,8 +96,11 @@ const NavLink: React.FC<INavLinkProps> = props => (
 const Nav: React.FC<RouteComponentProps> = props => {
   const { location } = props;
   const isApp = location.pathname.indexOf('/app') === 0;
+  const [loginOpen, setLoginOpen] = useState(false);
+
   return (
     <Styled>
+      <LoginModal open={loginOpen} onClickClose={() => setLoginOpen(false)} />
       <Container className="nav__container">
         <div className="nav__section nav__section--logo">
           <Link to="/">
@@ -134,15 +142,14 @@ const Nav: React.FC<RouteComponentProps> = props => {
             }
             return (
               <div className="nav__section nav__section--login">
-                <NavLink path="/login" title="Login" />
-                <Button secondary={true}>
+                <button
+                  className="nav__section__login-button"
+                  onClick={() => setLoginOpen(true)}
+                >
+                  Login
+                </button>
+                <Button secondary={true} onClick={() => setLoginOpen(true)}>
                   Sign Up
-                  <Icon
-                    name="LongRight"
-                    size="16px"
-                    color="black"
-                    m={{ l: '.5rem' }}
-                  />
                 </Button>
               </div>
             );

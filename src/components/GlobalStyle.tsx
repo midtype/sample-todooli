@@ -38,6 +38,8 @@ a, button {
   padding: 0;
   font-size: inherit;
   color: blue;
+  background: none;
+  cursor: pointer;
 }
 
 ul, li {

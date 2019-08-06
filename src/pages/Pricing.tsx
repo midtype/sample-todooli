@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Text, Icon } from 'atomize';
+import { Text } from 'atomize';
+import { Query, QueryResult } from 'react-apollo';
 
 import MarketingHeader from '../components/MarketingHeader';
 import Container from '../components/MarketingContainer';
 import Footer from '../components/Footer';
+import Loader from '../components/Loader';
 
 import * as colors from '../constants/colors';
+
+import GET_PRODUCTS, { IProducts } from '../apollo/queries/products';
 
 interface IEmployeeProps {
   image: string;
@@ -21,17 +25,14 @@ const Styled = styled.div`
     margin-bottom: 10rem;
   }
   .pricing__plans__plan {
-    display: flex;
     margin: auto;
-  }
-  .pricing__plans__plan__feature {
     box-shadow: 0 0 1px 0 rgba(8, 11, 14, 0.06),
       0 32px 40px -1px rgba(8, 11, 14, 0.1);
     margin: 1rem;
     padding: 2rem;
     min-width: 20rem;
   }
-  .pricing__plans__plan__feature__illustration {
+  .pricing__plans__plan__illustration {
     width: 10rem;
     height: 10rem;
     background-size: contain;
@@ -43,17 +44,10 @@ const Styled = styled.div`
   }
 `;
 
-const PlanFeature: React.FC = props => (
-  <div className="pricing__plans__plan">
-    <Icon name="Checked" color="success700" size="20px" m={{ r: '.5rem' }} />
-    <Text>{props.children}</Text>
-  </div>
-);
-
 const Plan: React.FC<IEmployeeProps> = props => (
-  <div className="pricing__plans__plan__feature">
+  <div className="pricing__plans__plan">
     <div
-      className="pricing__plans__plan__feature__illustration"
+      className="pricing__plans__plan__illustration"
       style={{ backgroundImage: `url('${props.image}')` }}
     />
     <Text tag="h3" textAlign="center" textSize="heading">
@@ -94,26 +88,33 @@ const PricingPage: React.FC = () => {
           </Text>
         </Container>
       </MarketingHeader>
-      <div className="pricing__plans">
-        <Plan
-          image="/images/illustrations/mirage-uploading.png"
-          name="Personal"
-          title="Free"
-        >
-          <PlanFeature>Unlimited Tasks</PlanFeature>
-          <PlanFeature>30-Day Archive of Tasks</PlanFeature>
-          <PlanFeature>No Projects</PlanFeature>
-        </Plan>
-        <Plan
-          image="/images/illustrations/mirage-upgrade.png"
-          name="Professional"
-          title="$20/month"
-        >
-          <PlanFeature>Unlimited Tasks</PlanFeature>
-          <PlanFeature>Unlimited Archive of Tasks</PlanFeature>
-          <PlanFeature>Unlimited Projects</PlanFeature>
-        </Plan>
-      </div>
+      <Query query={GET_PRODUCTS}>
+        {(query: QueryResult<IProducts>) => {
+          const { loading, data } = query;
+          if (loading) {
+            return <Loader />;
+          }
+          if (data && data.stripeProducts) {
+            return (
+              <div className="pricing__plans">
+                {data.stripeProducts.nodes.map((product: any) => (
+                  <Plan
+                    image={`/images/illustrations/products/${product.slug}.png`}
+                    name={product.name}
+                    title={
+                      product.stripePlans.nodes[0].amount
+                        ? `$${(
+                            product.stripePlans.nodes[0].amount / 100
+                          ).toFixed(2)}/month`
+                        : 'Free'
+                    }
+                  />
+                ))}
+              </div>
+            );
+          }
+        }}
+      </Query>
       <Footer />
     </Styled>
   );

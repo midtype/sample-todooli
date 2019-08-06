@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import {
   StripeProvider,
@@ -7,7 +7,13 @@ import {
   ReactStripeElements,
   injectStripe
 } from 'react-stripe-elements';
-import { Query, QueryResult, Mutation, MutationFn } from 'react-apollo';
+import {
+  Query,
+  QueryResult,
+  Mutation,
+  MutationFn,
+  withApollo
+} from 'react-apollo';
 
 import PoweredByStripe from './PoweredByStripe';
 import Loader from '../Loader';
@@ -29,6 +35,7 @@ interface IProps {
   title?: string;
   description?: string;
   stripe?: Stripe;
+  client?: any;
 }
 
 const Styled = styled.div`
@@ -106,6 +113,32 @@ const Styled = styled.div`
   }
   .payment__buttons {
     margin-top: 2rem;
+    display: flex;
+  }
+  .payment__error {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    width: fit-content;
+    border-radius: 3px;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    background: ${colors.RED(0.1)};
+    color: ${colors.RED()};
+    font-weight: bold;
+    animation: slide 250ms ease-in-out;
+    will-change: transform;
+  }
+
+  @keyframes slide {
+    from {
+      transform: translateX(calc(100% + 2rem));
+    }
+    to {
+      transform: translateX(0);
+    }
   }
 `;
 
@@ -141,29 +174,55 @@ const PaymentForm: React.FC<IProps> = props => {
   const [plan, setPlan] = useState<null | string>(null);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
+  const [error, setError] = useState<null | string>(null);
+
+  const onError = useCallback(
+    (message: string, time?: number) => {
+      setError(message);
+      setTimeout(() => setError(null), time || 5000);
+    },
+    [setError]
+  );
 
   const SubscribeButton = (
     <Mutation mutation={CREATE_SUBSCRIPTION}>
       {(subscribe: MutationFn) => {
         const onSubscribe = async () => {
-          if (stripe) {
+          if (stripe && plan) {
+            setError(null);
             setLoading(true);
             try {
               const res = await stripe.createToken({ name });
               const { token } = res;
               if (token) {
-                subscribe({ variables: { plan, token } });
+                subscribe({ variables: { plan, token: token.id } })
+                  .then(res => {
+                    if (
+                      res &&
+                      res.data.registerStripeSubscription.stripeSubscription
+                        .active
+                    ) {
+                      window.location.assign('/app');
+                    }
+                  })
+                  .catch(e => onError(e.message));
               } else {
-                throw new Error('Invalid credit card details.');
+                onError('Invalid credit card details.');
               }
             } catch (e) {
-              throw new Error('Invalid credit card details.');
+              onError('Invalid credit card details.');
             } finally {
               setLoading(false);
             }
+          } else if (!plan) {
+            onError('You must pick a plan to subscribe to.');
           }
         };
-        return <Button onClick={onSubscribe}>Subscribe</Button>;
+        return (
+          <Button loading={loading} onClick={onSubscribe}>
+            Subscribe
+          </Button>
+        );
       }}
     </Mutation>
   );
@@ -230,11 +289,13 @@ const PaymentForm: React.FC<IProps> = props => {
       </div>
 
       <div className="payment__buttons">{SubscribeButton}</div>
+
+      {error && <div className="payment__error">{error}</div>}
     </Styled>
   );
 };
 
-const PaymentFormInjectedStripe = injectStripe(PaymentForm);
+const PaymentFormInjectedStripe = injectStripe(withApollo(PaymentForm));
 
 const PaymentFormWrappedStripe: React.FC<IProps> = props => (
   <StripeProvider apiKey={process.env.REACT_APP_STRIPE_PK as string}>
