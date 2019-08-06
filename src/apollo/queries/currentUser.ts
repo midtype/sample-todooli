@@ -10,6 +10,7 @@ export default gql`
       stripeSubscriptionBySubscriberId {
         active
         id
+        pid
         stripePlan {
           id
           slug

@@ -103,7 +103,9 @@ const Button: React.FC<IProps> = props => (
     secondary={props.secondary}
     onClick={props.onClick}
     style={props.style}
-    className={props.loading ? 'button--loading' : ''}
+    className={`${props.className || ''} ${
+      props.loading ? ' button--loading' : ''
+    }`}
   >
     <div className="button__loading" />
     <label>{props.children}</label>

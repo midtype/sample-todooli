@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   StripeProvider,
@@ -14,6 +14,7 @@ import {
   MutationFn,
   withApollo
 } from 'react-apollo';
+import { ApolloClient } from 'apollo-boost';
 
 import PoweredByStripe from './PoweredByStripe';
 import Loader from '../Loader';
@@ -24,12 +25,22 @@ import * as colors from '../../constants/colors';
 
 import GET_PRODUCTS, { IProducts } from '../../apollo/queries/products';
 import CREATE_SUBSCRIPTION from '../../apollo/mutations/createSubscription';
+import UPDATE_SUBSCRIPTION from '../../apollo/mutations/updateSubscription';
+import GET_CURRENT_USER, {
+  ICurrentUser
+} from '../../apollo/queries/currentUser';
+import GET_INACTIVE_REASON, {
+  IInactiveReason
+} from '../../apollo/queries/getInactiveReason';
 
 type Stripe = ReactStripeElements.StripeProps & {
   handleCardPayment: (
     code: string
   ) => Promise<{ error?: Error; paymentIntent: {} }>;
 };
+
+const STRIPE_KEY = process.env.REACT_APP_STRIPE_PK || '';
+const GlobalStripe: Stripe = (window as any).Stripe(STRIPE_KEY);
 
 interface IProps {
   title?: string;
@@ -81,39 +92,47 @@ const Styled = styled.div`
   .payment__products__plan__price span {
     font-size: 0.7rem;
   }
-  .payment__cc__name input,
+  input,
   .payment__cc__details {
     padding: 1rem;
     margin: 0.5rem auto;
     background: ${colors.WHITE()};
     box-shadow: ${styles.BOX_SHADOW};
   }
-  .payment__cc__name {
+  .payment__cc__name,
+  .payment__cc__coupon {
     width: 100%;
     margin-top: 1rem;
+    display: flex;
+    flex-flow: column;
   }
-  .payment__cc__name label {
+  .payment__cc__name label,
+  .payment__cc__coupon label {
     font-size: 0.8rem;
   }
-  .payment__cc__name input {
+  input {
     font-size: 0.8rem;
     outline: none;
     border: none;
     margin: 0.5rem 0;
     padding: 0.8rem;
   }
-  .payment__powered {
+  .payment__cc__coupon {
     margin-top: 2rem;
-    width: 120px;
-    height: 30px;
-  }
-  .payment__powered svg {
-    width: 100%;
-    height: 100%;
   }
   .payment__buttons {
     margin-top: 2rem;
     display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .payment__powered {
+    width: 120px;
+    height: 28px;
+  }
+  .payment__powered svg {
+    width: 100%;
+    height: 100%;
   }
   .payment__error {
     position: fixed;
@@ -168,12 +187,42 @@ const Product: React.FC<IProductProps> = props => (
   </div>
 );
 
+const checkActive = (client: ApolloClient<any>, stripe?: Stripe) => {
+  if (client && stripe) {
+    client.query<ICurrentUser>({ query: GET_CURRENT_USER }).then(res => {
+      if (res.data && res.data.currentUser) {
+        const { stripeSubscriptionBySubscriberId: sub } = res.data.currentUser;
+        if (sub && !sub.active) {
+          client
+            .query<IInactiveReason>({
+              query: GET_INACTIVE_REASON,
+              variables: { id: sub.id }
+            })
+            .then(res => {
+              const { inactiveReason } = res.data.stripeSubscription;
+              if (inactiveReason.requiresActionSecret) {
+                GlobalStripe.handleCardPayment(
+                  inactiveReason.requiresActionSecret
+                );
+              }
+            });
+        }
+      }
+    });
+  }
+};
+
 const PaymentForm: React.FC<IProps> = props => {
-  const { stripe } = props;
+  const { stripe, client } = props;
+
+  useEffect(() => {
+    checkActive(client, stripe);
+  }, [client, stripe]);
 
   const [plan, setPlan] = useState<null | string>(null);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
+  const [coupon, setCoupon] = useState('');
   const [error, setError] = useState<null | string>(null);
 
   const onError = useCallback(
@@ -184,121 +233,158 @@ const PaymentForm: React.FC<IProps> = props => {
     [setError]
   );
 
-  const SubscribeButton = (
-    <Mutation mutation={CREATE_SUBSCRIPTION}>
-      {(subscribe: MutationFn) => {
-        const onSubscribe = async () => {
-          if (stripe && plan) {
-            setError(null);
-            setLoading(true);
-            try {
-              const res = await stripe.createToken({ name });
-              const { token } = res;
-              if (token) {
-                subscribe({ variables: { plan, token: token.id } })
-                  .then(res => {
-                    if (
-                      res &&
-                      res.data.registerStripeSubscription.stripeSubscription
-                        .active
-                    ) {
-                      window.location.assign('/app');
+  const getSubscribeButton = useCallback(
+    (sub?: IStripeSubscription) => (
+      <Mutation mutation={sub ? UPDATE_SUBSCRIPTION : CREATE_SUBSCRIPTION}>
+        {(subscribe: MutationFn) => {
+          const onSubscribe = async () => {
+            if (stripe && plan) {
+              setError(null);
+              setLoading(true);
+              try {
+                const res = await stripe.createToken({ name });
+                const { token } = res;
+                if (token) {
+                  await subscribe({
+                    variables: {
+                      id: sub ? sub.id : '',
+                      plan,
+                      token: token.id,
+                      coupon: coupon || undefined
                     }
                   })
-                  .catch(e => onError(e.message));
-              } else {
+                    .then(res => {
+                      if (
+                        res &&
+                        res.data.registerStripeSubscription.stripeSubscription
+                          .active
+                      ) {
+                        window.location.assign('/app');
+                      } else {
+                        checkActive(client, stripe);
+                      }
+                    })
+                    .catch(e => onError(e.message));
+                } else {
+                  onError('Invalid credit card details.');
+                }
+              } catch (e) {
                 onError('Invalid credit card details.');
+              } finally {
+                setLoading(false);
               }
-            } catch (e) {
-              onError('Invalid credit card details.');
-            } finally {
-              setLoading(false);
+            } else if (!plan) {
+              onError('You must pick a plan to subscribe to.');
             }
-          } else if (!plan) {
-            onError('You must pick a plan to subscribe to.');
-          }
-        };
-        return (
-          <Button loading={loading} onClick={onSubscribe}>
-            Subscribe
-          </Button>
-        );
-      }}
-    </Mutation>
+          };
+          return (
+            <Button loading={loading} onClick={onSubscribe}>
+              Subscribe
+            </Button>
+          );
+        }}
+      </Mutation>
+    ),
+    [client, coupon, loading, name, onError, plan, stripe]
   );
 
   return (
-    <Styled className="payment">
-      <div className="payment__header">
-        <h2>{props.title || 'Subscription'}</h2>
-        <p>
-          {props.description ||
-            'Select a plan and enter your billing information to begin.'}
-        </p>
-      </div>
+    <Query query={GET_CURRENT_USER}>
+      {(query: QueryResult<ICurrentUser>) => {
+        const { loading, data } = query;
+        if (loading) {
+          return <Loader />;
+        }
+        if (data && data.currentUser) {
+          const { stripeSubscriptionBySubscriberId: sub } = data.currentUser;
+          const SubscribeButton = getSubscribeButton(sub);
+          return (
+            <Styled className="payment">
+              <div className="payment__header">
+                <h2>{props.title || 'Subscription'}</h2>
+                <p>
+                  {props.description ||
+                    'Select a plan and enter your billing information to begin.'}
+                </p>
+              </div>
 
-      <div className="payment__products">
-        <h4>Plans</h4>
-        <Query query={GET_PRODUCTS}>
-          {(query: QueryResult<IProducts>) => {
-            const { loading, data } = query;
-            if (loading) {
-              return <Loader />;
-            }
-            if (data && data.stripeProducts) {
-              return (
-                <div className="payment__products__container">
-                  {data.stripeProducts.nodes
-                    .filter(product => product.stripePlans.nodes.length > 0)
-                    .map(product => (
-                      <Product
-                        key={product.id}
-                        active={plan === product.stripePlans.nodes[0].id}
-                        name={product.name}
-                        amount={product.stripePlans.nodes[0].amount}
-                        onClick={() => setPlan(product.stripePlans.nodes[0].id)}
-                      />
-                    ))}
+              <div className="payment__products">
+                <h4>Plans</h4>
+                <Query query={GET_PRODUCTS}>
+                  {(query: QueryResult<IProducts>) => {
+                    const { loading, data } = query;
+                    if (loading) {
+                      return <Loader />;
+                    }
+                    if (data && data.stripeProducts) {
+                      return (
+                        <div className="payment__products__container">
+                          {data.stripeProducts.nodes
+                            .filter(
+                              product => product.stripePlans.nodes.length > 0
+                            )
+                            .map(product => (
+                              <Product
+                                key={product.id}
+                                active={
+                                  plan === product.stripePlans.nodes[0].id
+                                }
+                                name={product.name}
+                                amount={product.stripePlans.nodes[0].amount}
+                                onClick={() =>
+                                  setPlan(product.stripePlans.nodes[0].id)
+                                }
+                              />
+                            ))}
+                        </div>
+                      );
+                    }
+                  }}
+                </Query>
+                <a href="/pricing" target="_blank" rel="">
+                  Learn more about our pricing plans.
+                </a>
+              </div>
+
+              <div className="payment__cc">
+                <h4>Credit Card Information</h4>
+                <div className="payment__cc__name">
+                  <label>Cardholder Name</label>
+                  <input value={name} onChange={e => setName(e.target.value)} />
                 </div>
-              );
-            }
-          }}
-        </Query>
-        <a href="/pricing" target="_blank" rel="">
-          Learn more about our pricing plans.
-        </a>
-      </div>
+                <div className="payment__cc__details">
+                  <CardElement />
+                </div>
+                <div className="payment__cc__coupon">
+                  <label>Coupon Code</label>
+                  <input
+                    value={coupon}
+                    onChange={e => setCoupon(e.target.value)}
+                  />
+                </div>
+              </div>
 
-      <div className="payment__cc">
-        <h4>Credit Card Information</h4>
-        <div className="payment__cc__name">
-          <label>Cardholder Name</label>
-          <input
-            className="payment__cc__name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
-        </div>
-        <div className="payment__cc__details">
-          <CardElement />
-        </div>
-      </div>
+              <div className="payment__buttons">
+                {SubscribeButton}
+                <div className="payment__powered">
+                  <PoweredByStripe />
+                </div>
+              </div>
 
-      <div className="payment__powered">
-        <PoweredByStripe />
-      </div>
-
-      <div className="payment__buttons">{SubscribeButton}</div>
-
-      {error && <div className="payment__error">{error}</div>}
-    </Styled>
+              {error && <div className="payment__error">{error}</div>}
+            </Styled>
+          );
+        }
+        return null;
+      }}
+    </Query>
   );
 };
 
 const PaymentFormInjectedStripe = injectStripe(withApollo(PaymentForm));
 
 const PaymentFormWrappedStripe: React.FC<IProps> = props => (
-  <StripeProvider apiKey={process.env.REACT_APP_STRIPE_PK as string}>
+  <StripeProvider apiKey={STRIPE_KEY}>
     <Elements>
       <PaymentFormInjectedStripe {...props} />
     </Elements>
