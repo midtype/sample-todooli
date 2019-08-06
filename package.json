@@ -5,6 +5,7 @@
   "dependencies": {
     "@types/dateformat": "^3.0.0",
     "@types/react-datepicker": "^2.8.1",
+    "@types/react-stripe-elements": "^1.3.0",
     "apollo-boost": "^0.4.2",
     "atomize": "^1.0.4",
     "dateformat": "^3.0.3",
@@ -16,6 +17,7 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
+    "react-stripe-elements": "^4.0.0",
     "react-transition-group": "^4.2.1",
     "styled-components": "^4.3.2",
     "typescript": "3.5.2"

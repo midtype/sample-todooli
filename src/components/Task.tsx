@@ -22,7 +22,7 @@ const Styled = styled.div`
   border-bottom: 1px solid ${colors.GRAY_2()};
   padding: 1rem 0;
   display: grid;
-  grid-template-columns: 2rem auto 8rem;
+  grid-template-columns: 2rem auto 10rem;
   grid-gap: 2rem;
 
   &:last-child {

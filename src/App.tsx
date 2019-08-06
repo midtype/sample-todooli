@@ -20,24 +20,52 @@ const Pricing = lazy(() => import('./pages/Pricing'));
 const Login = lazy(() => import('./pages/Login'));
 
 const AppIndex = lazy(() => import('./pages/app/Index'));
+const AppOnboarding = lazy(() => import('./pages/app/Onboarding'));
 
 /**
  * There are some routes in our app that we only want logged in users to be able to
  * access. For those routes, we wrap them in a GraphQL query that checks if the user
- * is currently logged in. If not, we redirect them to the login page. To learn
- * more about the Apollo `<Query />` component, [see their documentation](https://www.apollographql.com/docs/react/essentials/queries/#the-query-component)
+ * is currently logged in. Furthermore, we check to see if the user has an active
+ * Stripe subscription, and if not, redirect them to the payment flow so that they
+ * can create one. If not, we redirect them to the login page. To learn more about
+ * the Apollo `<Query />` component, [see their documentation](https://www.apollographql.com/docs/react/essentials/queries/#the-query-component)
  */
-const protect = (Page: React.FC): JSX.Element => (
-  <Query query={CURRENT_USER}>
-    {(query: QueryResult<ICurrentUser>) => {
-      const { loading, data } = query;
-      if (loading) {
-        return <Loader />;
-      }
-      return data && data.currentUser ? <Page /> : <Redirect to="/" />;
-    }}
-  </Query>
-);
+const protect = (Page: React.FC): JSX.Element => {
+  const { pathname } = window.location;
+
+  return (
+    <Query query={CURRENT_USER}>
+      {(query: QueryResult<ICurrentUser>) => {
+        const { loading, data } = query;
+
+        const isOnboarding = pathname.indexOf('/app/onboarding') === 0;
+        const isLoggedIn = data && data.currentUser;
+        const isSubscriber =
+          data &&
+          data.currentUser &&
+          data.currentUser.stripeSubscriptionBySubscriberId &&
+          data.currentUser.stripeSubscriptionBySubscriberId.active;
+
+        if (loading) {
+          return <Loader />;
+        }
+        if (!isLoggedIn) {
+          // If a non-logged user is trying to access the app, redirect them to the homepage.
+          return <Redirect to="/" />;
+        }
+        if (!isSubscriber && !isOnboarding) {
+          // If a non-subscriber is trying to reach the app, redirect them to the payment screen.
+          return <Redirect to="/app/onboarding" />;
+        }
+        if (isSubscriber && isOnboarding) {
+          // If a subscriber is trying to create a subscription, redirect them to the app.
+          return <Redirect to="/app" />;
+        }
+        return <Page />;
+      }}
+    </Query>
+  );
+};
 
 const App: React.FC = () => {
   return (
@@ -54,9 +82,13 @@ const App: React.FC = () => {
           <Route path="/login" exact component={Login} />
 
           {/* Protected Routes */}
-          {/* <Route path="/app" exact render={() => protect(AppIndex)} /> */}
-          <Route path="/app" exact component={AppIndex} />
-          <Route path="/app/billing" exact render={() => protect(Pricing)} />
+          <Route path="/app" exact render={() => protect(AppIndex)} />
+          <Route
+            path="/app/onboarding"
+            exact
+            render={() => protect(AppOnboarding)}
+          />
+          <Route path="/app/profile" exact render={() => protect(Pricing)} />
         </Suspense>
       </Switch>
       <GlobalStyle />

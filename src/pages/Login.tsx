@@ -5,27 +5,15 @@ import qs from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Redirect } from 'react-router-dom';
 
+import AppHeader from '../components/AppHeader';
 import LoginForm from '../components/elements/LoginForm';
 
-import { setJWT } from '../utils/jwt';
-import * as colors from '../constants/colors';
 import Loader from '../components/Loader';
 import CURRENT_USER from '../apollo/queries/currentUser';
+import { setJWT } from '../utils/jwt';
 
 const Styled = styled.div`
   padding-top: 5rem;
-
-  .nav__bg {
-    position: absolute;
-    top: 0;
-    width: 100vw;
-    height: 5rem;
-    background: linear-gradient(
-      to right,
-      ${colors.BRAND_1_LIGHT(1)},
-      ${colors.BRAND_1_LIGHT(0.5)}
-    );
-  }
 
   .login-form__container {
     position: fixed;
@@ -64,7 +52,7 @@ const LoginPage: React.FC<RouteComponentProps> = props => {
         }
         return (
           <Styled>
-            <div className="nav__bg" />
+            <AppHeader />
             <div className="login-form__container">
               <LoginForm />
             </div>

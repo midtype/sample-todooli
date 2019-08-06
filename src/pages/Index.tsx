@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Text, Button, Icon } from 'atomize';
+import { Text, Icon } from 'atomize';
 
 import Footer from '../components/Footer';
 import Container from '../components/MarketingContainer';
+import Button from '../components/Button';
 import MarketingHeader from '../components/MarketingHeader';
+import LoginModal from '../components/elements/LoginModal';
 
 import * as colors from '../constants/colors';
 
@@ -25,6 +27,9 @@ const Styled = styled.div`
     display: grid;
     grid-template-columns: 30rem auto;
     grid-gap: 2rem;
+  }
+  .promo-0__container button {
+    margin-top: 1rem;
   }
   .screenshot {
     width: 100%;
@@ -150,8 +155,14 @@ const Tool: React.FC<IFeatureProps> = props => (
 );
 
 const IndexPage: React.FC = () => {
+  const [loginOpen, setLoginOpen] = useState(false);
   return (
     <Styled>
+      <LoginModal
+        open={loginOpen}
+        onClickClose={() => setLoginOpen(false)}
+        title="Sign Up"
+      />
       <MarketingHeader bg={colors.BRAND_1}>
         <Container className="promo-0__container">
           <div className="promo-0__left">
@@ -162,24 +173,7 @@ const IndexPage: React.FC = () => {
             <Text tag="p" textSize="heading" m={{ t: '1rem' }}>
               A beautiful To Do app, built on the Midtype platform.
             </Text>
-            <Button
-              m={{ t: '2rem' }}
-              h="3rem"
-              p={{ x: '1.5rem' }}
-              bg="white"
-              textColor="info700"
-              textSize="title"
-              suffix={
-                <Icon
-                  name="LongRight"
-                  size="32px"
-                  color="info700"
-                  m={{ l: '.5rem' }}
-                />
-              }
-              shadow="3"
-              hoverShadow="4"
-            >
+            <Button secondary={true} onClick={() => setLoginOpen(true)}>
               Sign Up
             </Button>
           </div>

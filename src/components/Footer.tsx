@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Text, Button, Icon } from 'atomize';
+import { Text } from 'atomize';
 
 import Logo from './Logo';
+import Button from './Button';
 import Container from './MarketingContainer';
+import LoginModal from './elements/LoginModal';
 import * as colors from '../constants/colors';
 
 interface IFooterLinkProps {
@@ -45,9 +47,15 @@ const FooterLink: React.FC<IFooterLinkProps> = props => (
   </Link>
 );
 
-const Nav: React.FC = () => {
+const Footer: React.FC = () => {
+  const [loginOpen, setLoginOpen] = useState(false);
   return (
     <Styled>
+      <LoginModal
+        open={loginOpen}
+        onClickClose={() => setLoginOpen(false)}
+        title="Sign Up"
+      />
       <div className="footer__cta">
         <Container className="footer__cta__container">
           <div>
@@ -62,26 +70,7 @@ const Nav: React.FC = () => {
               Ready to double your productivity?
             </Text>
           </div>
-          <Button
-            m={{ t: '2rem' }}
-            h="3rem"
-            p={{ x: '1.5rem' }}
-            bg="info700"
-            textColor="white"
-            textSize="title"
-            suffix={
-              <Icon
-                name="LongRight"
-                size="32px"
-                color="white"
-                m={{ l: '.5rem' }}
-              />
-            }
-            shadow="3"
-            hoverShadow="4"
-          >
-            Sign Up
-          </Button>
+          <Button onClick={() => setLoginOpen(true)}>Sign Up</Button>
         </Container>
       </div>
       <footer>
@@ -119,4 +108,4 @@ const Nav: React.FC = () => {
   );
 };
 
-export default Nav;
+export default Footer;
