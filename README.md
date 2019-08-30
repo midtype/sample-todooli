@@ -1,6 +1,16 @@
-# Midtype Starter
+# Midtype Todooli Demo App
 
-This project is a starter kit for using Midtype with the following libraries:
+This is a demo frontend built by Midtype to demonstrate how to use the Midtype platform to power a SaaS product that requires a Stripe subscription in order to use it.
+
+## Video Walkthrough
+
+For a full video walkthrough of how to set up Todooli with your Midtype project, please watch the video below.
+
+[![Toodoli Setup Walkthrough](https://img.youtube.com/vi/86wBAW3RqjU/0.jpg)](https://www.youtube.com/watch?v=86wBAW3RqjU)
+
+## Generic Instructions
+
+This project was built using [a starter kit for Midtype]() with the following libraries:
 
 - **Typescript**, a [typed superset of Javascript](https://typescriptlang.org/docs/).
 - **React** the [open-source front-end framework](https://reactjs.org/docs/).
@@ -22,46 +32,3 @@ Before you get started, visit your project's Midtype dashboard and be sure you a
 3. Run the `yarn start` command from the root directory and your application should start running on `localhost:3000`.
 
 Once the app is up and running, you can use any of the GraphQL queries or mutations you find [in the API docs for your project](https://app.midtype.com/data). Good luck!
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
