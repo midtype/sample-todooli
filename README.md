@@ -10,7 +10,7 @@ For a full video walkthrough of how to set up Todooli with your Midtype project,
 
 ## Generic Instructions
 
-This project was built using [a starter kit for Midtype]() with the following libraries:
+This project was built using [a starter kit for Midtype](https://github.com/midtype/starter-react-apollo-typescript) with the following libraries:
 
 - **Typescript**, a [typed superset of Javascript](https://typescriptlang.org/docs/).
 - **React** the [open-source front-end framework](https://reactjs.org/docs/).
