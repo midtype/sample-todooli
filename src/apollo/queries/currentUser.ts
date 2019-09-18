@@ -4,9 +4,11 @@ export default gql`
   query GetCurrentUser {
     currentUser {
       id
-      name
-      email
-      photoUrl
+      private {
+        name
+        email
+        photoUrl
+      }
       stripeSubscriptionBySubscriberId {
         active
         id

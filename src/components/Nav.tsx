@@ -125,7 +125,7 @@ const Nav: React.FC<RouteComponentProps> = props => {
                   <div
                     className="nav__section__avatar"
                     style={{
-                      backgroundImage: `url('${data.currentUser.photoUrl}')`
+                      backgroundImage: `url('${data.currentUser.private.photoUrl}')`
                     }}
                   />
                 </div>

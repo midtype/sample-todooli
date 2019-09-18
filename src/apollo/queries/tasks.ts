@@ -1,10 +1,10 @@
 import { gql } from 'apollo-boost';
 
 export default gql`
-  query GetTasks($completed: Boolean, $projectId: UUID) {
+  query GetTasks($completed: Boolean) {
     tasks(
       orderBy: DUE_DATE_ASC
-      condition: { completed: $completed, projectId: $projectId }
+      filter: { completed: { equalTo: $completed } }
     ) {
       nodes {
         id
