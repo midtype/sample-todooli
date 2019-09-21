@@ -27,8 +27,8 @@ import GET_PRODUCTS, { IProducts } from '../../apollo/queries/products';
 import CREATE_SUBSCRIPTION from '../../apollo/mutations/createSubscription';
 import UPDATE_SUBSCRIPTION from '../../apollo/mutations/updateSubscription';
 import GET_CURRENT_USER, {
-  ICurrentUser
-} from '../../apollo/queries/currentUser';
+  IUserInSession
+} from '../../apollo/queries/userInSession';
 import GET_INACTIVE_REASON, {
   IInactiveReason
 } from '../../apollo/queries/getInactiveReason';
@@ -189,9 +189,11 @@ const Product: React.FC<IProductProps> = props => (
 
 const checkActive = (client: ApolloClient<any>, stripe?: Stripe) => {
   if (client && stripe) {
-    client.query<ICurrentUser>({ query: GET_CURRENT_USER }).then(res => {
-      if (res.data && res.data.currentUser) {
-        const { stripeSubscriptionBySubscriberId: sub } = res.data.currentUser;
+    client.query<IUserInSession>({ query: GET_CURRENT_USER }).then(res => {
+      if (res.data && res.data.mUserInSession) {
+        const {
+          mStripeSubscriptionBySubscriberId: sub
+        } = res.data.mUserInSession;
         if (sub && !sub.active) {
           client
             .query<IInactiveReason>({
@@ -290,13 +292,15 @@ const PaymentForm: React.FC<IProps> = props => {
 
   return (
     <Query query={GET_CURRENT_USER}>
-      {(query: QueryResult<ICurrentUser>) => {
+      {(query: QueryResult<IUserInSession>) => {
         const { loading, data } = query;
         if (loading) {
           return <Loader />;
         }
-        if (data && data.currentUser) {
-          const { stripeSubscriptionBySubscriberId: sub } = data.currentUser;
+        if (data && data.mUserInSession) {
+          const {
+            mStripeSubscriptionBySubscriberId: sub
+          } = data.mUserInSession;
           const SubscribeButton = getSubscribeButton(sub);
           return (
             <Styled className="payment">
@@ -321,18 +325,25 @@ const PaymentForm: React.FC<IProps> = props => {
                         <div className="payment__products__container">
                           {data.stripeProducts.nodes
                             .filter(
-                              product => product.stripePlans.nodes.length > 0
+                              product =>
+                                product.mStripePlansByProductId.nodes.length > 0
                             )
                             .map(product => (
                               <Product
                                 key={product.id}
                                 active={
-                                  plan === product.stripePlans.nodes[0].id
+                                  plan ===
+                                  product.mStripePlansByProductId.nodes[0].id
                                 }
                                 name={product.name}
-                                amount={product.stripePlans.nodes[0].amount}
+                                amount={
+                                  product.mStripePlansByProductId.nodes[0]
+                                    .amount
+                                }
                                 onClick={() =>
-                                  setPlan(product.stripePlans.nodes[0].id)
+                                  setPlan(
+                                    product.mStripePlansByProductId.nodes[0].id
+                                  )
                                 }
                               />
                             ))}

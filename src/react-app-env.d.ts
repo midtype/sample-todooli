@@ -7,7 +7,7 @@ interface IUser {
   name: string;
   email: string;
   photoUrl: string;
-  stripeSubscriptionBySubscriberId: IStripeSubscription;
+  mStripeSubscriptionBySubscriberId: IStripeSubscription;
 }
 
 interface ITask {
@@ -43,7 +43,7 @@ interface IStripePlan {
   pid: string;
   slug: string;
   amount: number;
-  stripeProduct: IStripeProduct;
+  product: IStripeProduct;
 }
 
 interface IStripeProduct {
@@ -51,7 +51,7 @@ interface IStripeProduct {
   pid: string;
   slug: string;
   name: string;
-  stripePlans: {
+  mStripePlansByProductId: {
     nodes: IStripePlan[];
   };
 }

@@ -10,7 +10,7 @@ import {
 import GlobalStyle from './components/GlobalStyle';
 import Nav from './components/Nav';
 import Loader from './components/Loader';
-import CURRENT_USER, { ICurrentUser } from './apollo/queries/currentUser';
+import CURRENT_USER, { IUserInSession } from './apollo/queries/userInSession';
 
 const Index = lazy(() => import('./pages/Index'));
 const About = lazy(() => import('./pages/About'));
@@ -35,16 +35,16 @@ const protect = (Page: React.FC): JSX.Element => {
 
   return (
     <Query query={CURRENT_USER}>
-      {(query: QueryResult<ICurrentUser>) => {
+      {(query: QueryResult<IUserInSession>) => {
         const { loading, data } = query;
 
         const isOnboarding = pathname.indexOf('/app/onboarding') === 0;
-        const isLoggedIn = data && data.currentUser;
+        const isLoggedIn = data && data.mUserInSession;
         const isSubscriber =
           data &&
-          data.currentUser &&
-          data.currentUser.stripeSubscriptionBySubscriberId &&
-          data.currentUser.stripeSubscriptionBySubscriberId.active;
+          data.mUserInSession &&
+          data.mUserInSession.mStripeSubscriptionBySubscriberId &&
+          data.mUserInSession.mStripeSubscriptionBySubscriberId.active;
 
         if (loading) {
           return <Loader />;

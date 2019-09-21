@@ -9,7 +9,7 @@ import AppHeader from '../components/AppHeader';
 import LoginForm from '../components/elements/LoginForm';
 
 import Loader from '../components/Loader';
-import CURRENT_USER from '../apollo/queries/currentUser';
+import CURRENT_USER from '../apollo/queries/userInSession';
 import { setJWT } from '../utils/jwt';
 
 const Styled = styled.div`
@@ -47,7 +47,7 @@ const LoginPage: React.FC<RouteComponentProps> = props => {
         if (loading) {
           return <Loader />;
         }
-        if (data && data.currentUser) {
+        if (data && data.mUserInSession) {
           return <Redirect to="/app" />;
         }
         return (

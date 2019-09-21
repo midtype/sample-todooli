@@ -2,13 +2,13 @@ import { gql } from 'apollo-boost';
 
 export default gql`
   query GetProducts {
-    stripeProducts {
+    mStripeProducts {
       nodes {
         id
         pid
         slug
         name
-        stripePlans {
+        mStripePlansByProductId {
           nodes {
             id
             pid

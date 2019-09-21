@@ -6,14 +6,10 @@ export default gql`
     $token: String!
     $coupon: String
   ) {
-    registerStripeSubscription(
-      input: {
-        stripePlanId: $plan
-        paymentSourcePid: $token
-        couponPid: $coupon
-      }
+    mCreateStripeSubscription(
+      input: { planId: $plan, paymentSourcePid: $token, couponPid: $coupon }
     ) {
-      stripeSubscription {
+      mStripeSubscription {
         id
         pid
         active

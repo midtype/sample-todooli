@@ -14,7 +14,7 @@ import Input from './elements/Input';
 import * as colors from '../constants/colors';
 import * as styles from '../constants/styles';
 
-import CURRENT_USER, { ICurrentUser } from '../apollo/queries/currentUser';
+import CURRENT_USER, { IUserInSession } from '../apollo/queries/userInSession';
 import CREATE_TASK from '../apollo/mutations/createTask';
 import UPDATE_TASK from '../apollo/mutations/updateTask';
 
@@ -117,12 +117,12 @@ const Task: React.FC<IProps> = props => {
 
   return (
     <Query query={CURRENT_USER}>
-      {(query: QueryResult<ICurrentUser>) => {
+      {(query: QueryResult<IUserInSession>) => {
         const { loading, data } = query;
         if (loading) {
           return <Loader />;
         }
-        if (data && data.currentUser) {
+        if (data && data.mUserInSession) {
           return (
             <Styled className={completed ? 'checked' : 'unchecked'}>
               <Mutation mutation={UPDATE_TASK}>
@@ -187,7 +187,7 @@ const Task: React.FC<IProps> = props => {
                               refetchQueries: ['GetTasks'],
                               variables: {
                                 id: props.task ? props.task.id : undefined,
-                                userId: data.currentUser.id,
+                                userId: data.mUserInSession.id,
                                 summary,
                                 dueDate: date.toISOString()
                               }

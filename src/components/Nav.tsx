@@ -13,7 +13,7 @@ import LoginModal from './elements/LoginModal';
 
 import * as colors from '../constants/colors';
 import * as styles from '../constants/styles';
-import CURRENT_USER from '../apollo/queries/currentUser';
+import CURRENT_USER, { IUserInSession } from '../apollo/queries/userInSession';
 
 const Styled = styled.header`
   position: absolute;
@@ -114,24 +114,24 @@ const Nav: React.FC<RouteComponentProps> = props => {
           <NavLink path="/pricing" title="Pricing" />
         </div>
         <Query query={CURRENT_USER}>
-          {(query: QueryResult) => {
+          {(query: QueryResult<IUserInSession>) => {
             const { loading, data } = query;
             if (loading) {
               return <Loader />;
             }
-            if (data && data.currentUser && isApp) {
+            if (data && data.mUserInSession && isApp) {
               return (
                 <div className="nav__section nav__section--profile">
                   <div
                     className="nav__section__avatar"
                     style={{
-                      backgroundImage: `url('${data.currentUser.photoUrl}')`
+                      backgroundImage: `url('${data.mUserInSession.photoUrl}')`
                     }}
                   />
                 </div>
               );
             }
-            if (data && data.currentUser) {
+            if (data && data.mUserInSession) {
               return (
                 <div className="nav__section nav__section--login">
                   <Link to="/app">

@@ -2,7 +2,7 @@ import { gql } from 'apollo-boost';
 
 export default gql`
   query GetInactiveReason($id: UUID!) {
-    stripeSubscription(id: $id) {
+    mStripeSubscription(id: $id) {
       id
       inactiveReason {
         cause

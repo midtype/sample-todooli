@@ -2,10 +2,10 @@ import { gql } from 'apollo-boost';
 
 export default gql`
   mutation UpdateSubscription($id: UUID!, $token: String!) {
-    updateStripeSubscription(
+    updateMStripeSubscription(
       input: { id: $id, patch: { paymentSourcePid: $token } }
     ) {
-      stripeSubscription {
+      mStripeSubscription {
         id
         pid
         active
