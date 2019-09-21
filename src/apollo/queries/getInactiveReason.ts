@@ -13,7 +13,7 @@ export default gql`
 `;
 
 export interface IInactiveReason {
-  stripeSubscription: {
+  mStripeSubscription: {
     inactiveReason: {
       cause: string;
       requiresActionSecret: string;

@@ -201,7 +201,7 @@ const checkActive = (client: ApolloClient<any>, stripe?: Stripe) => {
               variables: { id: sub.id }
             })
             .then(res => {
-              const { inactiveReason } = res.data.stripeSubscription;
+              const { inactiveReason } = res.data.mStripeSubscription;
               if (inactiveReason.requiresActionSecret) {
                 GlobalStripe.handleCardPayment(
                   inactiveReason.requiresActionSecret
