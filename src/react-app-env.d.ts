@@ -4,9 +4,11 @@ declare module 'atomize';
 
 interface IUser {
   id: string;
-  name: string;
-  email: string;
-  photoUrl: string;
+  private: {
+    name: string;
+    email: string;
+    photoUrl: string;
+  };
   mStripeSubscriptionBySubscriberId: IStripeSubscription;
 }
 

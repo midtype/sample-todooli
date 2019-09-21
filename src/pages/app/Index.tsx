@@ -10,6 +10,7 @@ import Loader from '../../components/Loader';
 
 import * as colors from '../../constants/colors';
 import GET_TASKS, { ITasks } from '../../apollo/queries/tasks';
+import GET_PROJECTS, { IProjects } from '../../apollo/queries/projects';
 
 const Styled = styled.div`
   padding: 3rem;
@@ -64,6 +65,8 @@ const Styled = styled.div`
 
 const TasksPage: React.FC = () => {
   const [newTask, setNewTask] = useState(false);
+  const [completed, setCompleted] = useState(false);
+  const [projectId, setProjectId] = useState<string | undefined>();
 
   const onCreateTask = () => setNewTask(true);
   const onCancelEdit = () => setNewTask(false);
@@ -77,20 +80,62 @@ const TasksPage: React.FC = () => {
           </Button>
           <h4 className="menu__list-heading">Tasks</h4>
           <ul className="menu__list">
-            <li className="menu__list__item menu__list__item--active">Open</li>
-            <li className="menu__list__item">Completed</li>
+            <li
+              className={`menu__list__item menu__list__item--${
+                completed ? 'inactive' : 'active'
+              }`}
+              onClick={() => setCompleted(false)}
+            >
+              Open
+            </li>
+            <li
+              className={`menu__list__item menu__list__item--${
+                completed ? 'active' : 'inactive'
+              }`}
+              onClick={() => setCompleted(true)}
+            >
+              Completed
+            </li>
           </ul>
 
           <h4 className="menu__list-heading">Projects</h4>
-          <ul className="menu__list">
-            <li className="menu__list__item">Open</li>
-            <li className="menu__list__item">Completed</li>
-            <Button secondary={true}>New</Button>
-          </ul>
+          <Query query={GET_PROJECTS}>
+            {(query: QueryResult<IProjects>) => {
+              const { loading, data } = query;
+              if (loading) {
+                return <Loader />;
+              }
+              if (data) {
+                return (
+                  <ul className="menu__list">
+                    {data.projects.nodes.map(project => (
+                      <li
+                        key={project.id}
+                        className={`menu__list__item menu__list__item--${
+                          projectId === project.id ? 'active' : 'inactive'
+                        }`}
+                        onClick={() => {
+                          if (project.id === projectId) {
+                            setProjectId(undefined);
+                          } else {
+                            setProjectId(project.id);
+                          }
+                        }}
+                      >
+                        {project.name}
+                      </li>
+                    ))}
+                    <Button secondary={true}>New</Button>
+                  </ul>
+                );
+              }
+              return null;
+            }}
+          </Query>
         </div>
         <div className="tasks">
           {newTask && <Task editing={true} onClickCancel={onCancelEdit} />}
-          <Query query={GET_TASKS}>
+          <Query query={GET_TASKS} variables={{ completed, projectId }}>
             {(query: QueryResult<ITasks>) => {
               const { loading, data } = query;
               if (loading) {

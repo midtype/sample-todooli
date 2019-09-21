@@ -132,6 +132,7 @@ const Task: React.FC<IProps> = props => {
                       onClick={() => {
                         if (props.task) {
                           update({
+                            refetchQueries: ['GetTasks'],
                             variables: {
                               id: props.task.id,
                               completed: !completed
@@ -155,12 +156,14 @@ const Task: React.FC<IProps> = props => {
                   <p className="summary__text">{summary}</p>
                 )}
                 <div className="summary__date">
-                  <div
-                    className="summary__date__project"
-                    style={{ borderColor: '#C56CD6', color: '#C56CD6' }}
-                  >
-                    Design
-                  </div>
+                  {props.task && props.task.project && (
+                    <div
+                      className="summary__date__project"
+                      style={{ borderColor: '#C56CD6', color: '#C56CD6' }}
+                    >
+                      {props.task.project.name}
+                    </div>
+                  )}
                   <span>Due On</span>
                   {editing ? (
                     <DatePicker
