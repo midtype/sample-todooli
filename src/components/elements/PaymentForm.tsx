@@ -191,9 +191,7 @@ const checkActive = (client: ApolloClient<any>, stripe?: Stripe) => {
   if (client && stripe) {
     client.query<IUserInSession>({ query: GET_CURRENT_USER }).then(res => {
       if (res.data && res.data.mUserInSession) {
-        const {
-          mStripeSubscriptionBySubscriberId: sub
-        } = res.data.mUserInSession;
+        const { subscription: sub } = res.data.mUserInSession;
         if (sub && !sub.active) {
           client
             .query<IInactiveReason>({
@@ -298,9 +296,7 @@ const PaymentForm: React.FC<IProps> = props => {
           return <Loader />;
         }
         if (data && data.mUserInSession) {
-          const {
-            mStripeSubscriptionBySubscriberId: sub
-          } = data.mUserInSession;
+          const { subscription: sub } = data.mUserInSession;
           const SubscribeButton = getSubscribeButton(sub);
           return (
             <Styled className="payment">
@@ -320,30 +316,19 @@ const PaymentForm: React.FC<IProps> = props => {
                     if (loading) {
                       return <Loader />;
                     }
-                    if (data && data.stripeProducts) {
+                    if (data && data.mStripeProducts) {
                       return (
                         <div className="payment__products__container">
-                          {data.stripeProducts.nodes
-                            .filter(
-                              product =>
-                                product.mStripePlansByProductId.nodes.length > 0
-                            )
+                          {data.mStripeProducts.nodes
+                            .filter(product => product.plans.nodes.length > 0)
                             .map(product => (
                               <Product
                                 key={product.id}
-                                active={
-                                  plan ===
-                                  product.mStripePlansByProductId.nodes[0].id
-                                }
+                                active={plan === product.plans.nodes[0].id}
                                 name={product.name}
-                                amount={
-                                  product.mStripePlansByProductId.nodes[0]
-                                    .amount
-                                }
+                                amount={product.plans.nodes[0].amount}
                                 onClick={() =>
-                                  setPlan(
-                                    product.mStripePlansByProductId.nodes[0].id
-                                  )
+                                  setPlan(product.plans.nodes[0].id)
                                 }
                               />
                             ))}

@@ -43,8 +43,8 @@ const protect = (Page: React.FC): JSX.Element => {
         const isSubscriber =
           data &&
           data.mUserInSession &&
-          data.mUserInSession.mStripeSubscriptionBySubscriberId &&
-          data.mUserInSession.mStripeSubscriptionBySubscriberId.active;
+          data.mUserInSession.subscription &&
+          data.mUserInSession.subscription.active;
 
         if (loading) {
           return <Loader />;

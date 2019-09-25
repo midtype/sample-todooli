@@ -8,7 +8,7 @@ export default gql`
         pid
         slug
         name
-        mStripePlansByProductId {
+        plans {
           nodes {
             id
             pid
@@ -22,7 +22,7 @@ export default gql`
 `;
 
 export interface IProducts {
-  stripeProducts: {
+  mStripeProducts: {
     nodes: IStripeProduct[];
   };
 }

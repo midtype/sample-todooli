@@ -9,7 +9,7 @@ export default gql`
         email
         photoUrl
       }
-      mStripeSubscriptionBySubscriberId {
+      subscription {
         active
         id
         pid

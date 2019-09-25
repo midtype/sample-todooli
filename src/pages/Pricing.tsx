@@ -94,18 +94,18 @@ const PricingPage: React.FC = () => {
           if (loading) {
             return <Loader />;
           }
-          if (data && data.stripeProducts) {
+          if (data && data.mStripeProducts) {
             return (
               <div className="pricing__plans">
-                {data.stripeProducts.nodes.map((product: any) => (
+                {data.mStripeProducts.nodes.map((product: any) => (
                   <Plan
                     image={`/images/illustrations/products/${product.slug}.png`}
                     name={product.name}
                     title={
-                      product.stripePlans.nodes[0].amount
-                        ? `$${(
-                            product.stripePlans.nodes[0].amount / 100
-                          ).toFixed(2)}/month`
+                      product.plans.nodes[0].amount
+                        ? `$${(product.plans.nodes[0].amount / 100).toFixed(
+                            2
+                          )}/month`
                         : 'Free'
                     }
                   />
