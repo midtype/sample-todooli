@@ -6,7 +6,7 @@ export default gql`
     $token: String!
     $coupon: String
   ) {
-    mCreateStripeSubscription(
+    createMStripeSubscription(
       input: { planId: $plan, paymentSourcePid: $token, couponPid: $coupon }
     ) {
       mStripeSubscription {
