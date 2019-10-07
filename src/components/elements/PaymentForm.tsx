@@ -247,7 +247,7 @@ const PaymentForm: React.FC<IProps> = props => {
                 if (token) {
                   await subscribe({
                     variables: {
-                      id: sub ? sub.id : '',
+                      id: sub ? sub.id : undefined,
                       plan,
                       token: token.id,
                       coupon: coupon || undefined
@@ -256,7 +256,7 @@ const PaymentForm: React.FC<IProps> = props => {
                     .then(res => {
                       if (
                         res &&
-                        res.data.registerStripeSubscription.stripeSubscription
+                        res.data.createMStripeSubscription.mStripeSubscription
                           .active
                       ) {
                         window.location.assign('/app');
