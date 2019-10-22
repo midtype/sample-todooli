@@ -39,12 +39,14 @@ const Styled = styled.div`
   }
 `;
 
+const SIGN_IN_LINK = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=310346463088-u5mebbn91d619r4poms613jvssm1gevn.apps.googleusercontent.com&redirect_uri=https://api.midtype.com/login&access_type=offline&state=name%3D${process.env.REACT_APP_MY_APP_ID}%26redirect%3D${process.env.REACT_APP_MY_APP_REDIRECT_URL}&scope=profile%20email`;
+
 const Logo: React.FC<IProps> = props => {
   return (
     <Styled>
       <h3>{props.title || 'Login'}</h3>
       <div className="login__google">
-        <a href={process.env.REACT_APP_MY_APP_GOOGLE_SIGN_IN_LINK}>
+        <a href={SIGN_IN_LINK}>
           <img src="/images/google-sign-in.png" alt="Google sign in link." />
         </a>
       </div>
