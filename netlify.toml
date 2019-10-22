@@ -10,5 +10,6 @@
 [template.environment]
   REACT_APP_MY_APP_NAME="App Display Name"
   REACT_APP_MY_APP_ID="Midtype Project ID"
-  REACT_APP_MY_APP_GOOGLE_SIGN_IN_LINK="Google Sign In Redirect URL"
-  REACT_APP_STRIPE_PK="Stripe Publishable Key"
+  REACT_APP_MY_APP_ENDPOINT="https://todooli-pkv6fida6a-uc.a.run.app/graphql"
+  REACT_APP_MY_APP_REDIRECT_URL="Where users should be redirected after logging in"
+  REACT_APP_STRIPE_PK="Your Stripe publishable key"
